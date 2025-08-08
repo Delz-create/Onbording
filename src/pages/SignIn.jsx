@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Container,
-  Grid,
   TextField,
   Typography,
   InputAdornment,
@@ -18,7 +17,7 @@ import { Visibility, VisibilityOff, Email } from "@mui/icons-material";
 import { FaGooglePlay, FaApple } from "react-icons/fa";
 
 import LoginImg from "../assets/images/Login-img.png";
-import LoginBG from "../assets/images/LoginBG.jpg";
+import LoginBG from "../assets/images/LoginBG.JPG";
 
 import Logo from "../assets/images/logo.png";
 
