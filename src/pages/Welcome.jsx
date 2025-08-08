@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Button, Typography, Grid, Paper } from "@mui/material";
 import OnboardingBG from "../assets/images/OnboardingBG.png";
-import Logo from "../assets/images/logo.png";
+import Logo from "../assets/images/Logo.png";
 import LanguageIcon from "@mui/icons-material/Language";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
