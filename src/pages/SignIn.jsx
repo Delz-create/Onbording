@@ -19,7 +19,7 @@ import { FaGooglePlay, FaApple } from "react-icons/fa";
 import LoginImg from "../assets/images/Login-img.png";
 import LoginBG from "../assets/images/LoginBG.png";
 
-import Logo from "../assets/images/logo.png";
+import Logo from "../assets/images/Logo.png";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
