@@ -56,6 +56,7 @@ const SignIn = () => {
         setAlert({ type: "success", message: data.message });
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("email", data.user.email)
 
         setTimeout(() => {
           window.location.href = "/signup";
