@@ -1,58 +1,33 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Button,
-  Grid,
   TextField,
-  Typography,
-  InputAdornment,
   CircularProgress,
+  Typography,
+  Alert,
 } from "@mui/material";
 
-const Step1AccountSetup = ({ formData, handleChange, handleNext }) => {
-  const [usernameStatus, setUsernameStatus] = useState(null);
+const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
   const [checkingUsername, setCheckingUsername] = useState(false);
-
-  const businessEmail = localStorage.getItem("email") || "";
-
-  useEffect(() => {
-    if (formData.username) {
-      let baseId = formData.username;
-      if (formData.officialBrandName) {
-      baseId += `-${formData.officialBrandName}`;
-      }
-      const brandId = baseId.replace(/\s+/g, "-").toLowerCase();
-      handleChange("businessId", brandId);
-      }
-  }, [formData.username, formData.officialBrandName]);
-
-  useEffect(() => {
-    if (!formData.username) {
-      setUsernameStatus(null);
-      return;
-    }
-
-    const delayDebounce = setTimeout(() => {
-      checkUsername(formData.username);
-    }, 5000);
-
-    return () => clearTimeout(delayDebounce);
-  }, [formData.username]);
+  const [usernameStatus, setUsernameStatus] = useState(null);
 
   const checkUsername = async (username) => {
+    if (!username) return;
     setCheckingUsername(true);
     try {
       const res = await fetch(
-        `https://api.pozse.com/api/v1/business/check-username/${encodeURIComponent(username)}`
+        `https://api.pozse.com/api/v1/business/check-username/${encodeURIComponent(
+          username
+        )}`
       );
       const data = await res.json();
       console.log("Username check result:", data);
 
       if (data.success && data.status === true) {
-             setUsernameStatus("available");
-           } else {
-             setUsernameStatus("taken");
-         }
+        setUsernameStatus("available");
+      } else {
+        setUsernameStatus("taken");
+      }
     } catch (error) {
       console.error("Username check failed", error);
       setUsernameStatus(null);
@@ -61,122 +36,132 @@ const Step1AccountSetup = ({ formData, handleChange, handleNext }) => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (usernameStatus !== "available") return;
-    handleNext();
-  };
+  useEffect(() => {
+    if (formData.username) {
+      let baseId = formData.username;
+      if (formData.officialBrandName) {
+        baseId += `-${formData.officialBrandName}`;
+      }
+      const brandId = baseId.replace(/\s+/g, "-").toLowerCase();
+      handleChange("businessId", brandId);
+    }
+  }, [formData.username, formData.officialBrandName]);
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("email");
+    if (storedEmail && !formData.businessEmail) {
+      handleChange("businessEmail", storedEmail);
+    }
+  }, []);
+
+  useEffect(() => {
+    const valid =
+      formData.officialBrandName &&
+      formData.businessEmail &&
+      formData.username &&
+      usernameStatus === "available" &&
+      formData.businessId &&
+      formData.address &&
+      formData.country;
+
+    setStepValid(valid);
+  }, [
+    formData.officialBrandName,
+    formData.businessEmail,
+    formData.username,
+    usernameStatus,
+    formData.businessId,
+    formData.address,
+    formData.country,
+  ]);
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ p: 3, backgroundColor: "#fff" }}>
-      <Typography variant="h5" mb={3} sx={{color: "#111", fontFamily: "Poppins"}}>
+    <Box>
+      <Typography
+        variant="h6"
+        fontWeight="bold"
+        mb={3}>
         Account Setup
       </Typography>
 
       <TextField
         label="Official Brand Name"
         fullWidth
-        value={formData.officialBrandName}
-        onChange={(e) => handleChange("officialBrandName", e.target.value)}
         margin="normal"
-        required
+        value={formData.officialBrandName || ""}
+        onChange={(e) => handleChange("officialBrandName", e.target.value)}
       />
 
       <TextField
         label="Business Email"
         fullWidth
-        value={businessEmail}
-        onChange={() => {}}
         margin="normal"
-        InputProps={{ readOnly: true }}
+        value={formData.businessEmail || ""}
+        onChange={(e) => handleChange("businessEmail", e.target.value)}
       />
 
-      <Grid container spacing={2} mt={1}>
-        <Grid item xs={12} md={6}>
-          <TextField
-            label="Username"
-            fullWidth
-            value={formData.username}
-            onChange={(e) => handleChange("username", e.target.value)}
-            required
-            sx= {{
-              color: "#fff"
-            }}
-            helperText={
-              checkingUsername
-                ? "Checking availability..."
-                : usernameStatus === "available"
-                ? "Available"
-                : usernameStatus === "taken"
-                ? "Taken"
-                : ""
-            }
-            FormHelperTextProps={{
-              sx: {
-                fontFamily: "Poppins",
-                color:
-                  usernameStatus === "available"
-                    ? "green"
-                    : usernameStatus === "taken"
-                    ? "red"
-                    : "inherit",
-              },
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            label="Business ID"
-            fullWidth
-            value={formData.businessId || ""}
-            margin="normal"
-            InputProps={{ readOnly: true }}
-            sx={{
-              fontFamily: "Poppins"
-            }}
-          />
-        </Grid>
-      </Grid>
+      <Box
+        display="flex"
+        gap={2}>
+        <TextField
+          label="Username"
+          fullWidth
+          margin="normal"
+          value={formData.username || ""}
+          onChange={(e) => handleChange("username", e.target.value)}
+          onBlur={() => checkUsername(formData.username)}
+          helperText={
+            checkingUsername
+              ? "Checking availability..."
+              : usernameStatus === "available"
+              ? "Username available"
+              : usernameStatus === "taken"
+              ? "Username already taken"
+              : ""
+          }
+        />
+
+        <TextField
+          label="Business ID"
+          fullWidth
+          margin="normal"
+          value={formData.businessId || ""}
+          InputProps={{ readOnly: true }}
+        />
+      </Box>
 
       <TextField
         label="Address"
         fullWidth
-        value={formData.address}
-        onChange={(e) => handleChange("address", e.target.value)}
         margin="normal"
-        required
-        sx={{
-          fontFamily: "Poppins"
-        }}
+        value={formData.address || ""}
+        onChange={(e) => handleChange("address", e.target.value)}
       />
 
       <TextField
         label="Country of Registration"
         fullWidth
-        value={formData.country}
-        onChange={(e) => handleChange("country", e.target.value)}
         margin="normal"
-        required
-        sx={{
-          fontFamily: "Poppins"
-        }}
+        value={formData.country || ""}
+        onChange={(e) => handleChange("country", e.target.value)}
       />
 
-      <Button
-        type="submit"
-        variant="contained"
-        disabled={usernameStatus !== "available"}
-        sx={{
-          mt: 3,
-          py: 1.5,
-          borderRadius: 5,
-          backgroundImage: "linear-gradient(to right, #D32F2F, #B71C1C)",
-          fontFamily: "Poppins",
-          TextTransform: "capitalize"
-        }}
-      >
-        Continue
-      </Button>
+      {!(
+        formData.officialBrandName &&
+        formData.businessEmail &&
+        formData.username &&
+        usernameStatus === "available" &&
+        formData.businessId &&
+        formData.address &&
+        formData.country
+      ) && (
+        <Alert
+          severity="info"
+          sx={{ mt: 2 }}>
+          Please complete all fields and choose an available username to
+          continue.
+        </Alert>
+      )}
     </Box>
   );
 };
