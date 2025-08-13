@@ -3,57 +3,61 @@ import {
   Box,
   TextField,
   Typography,
+  Chip,
   MenuItem,
   Select,
-  InputLabel,
-  FormControl,
-  Chip,
   OutlinedInput,
+  FormHelperText,
   IconButton,
 } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { FiUpload } from "react-icons/fi";
 
-const brandOptions = [
-  "Clothing (Men, Women, Unisex, Kids, Maternity, Plus-Size)",
-  "Footwear (Men, Women, Kids, Sports, Formal, Casual)",
-  "Accessories (Bags, Belts, Hats, Sunglasses, Jewelry, Watches)",
-  "Beauty & Grooming (Makeup, Skincare, Hair, Fragrance)",
-  "Luxury & Designer (Haute Couture, Limited Editions)",
+const brandTypeOptions = [
+  "Clothing",
+  "Footwear",
+  "Accessories",
+  "Beauty & Grooming",
+  "Luxury & Designer",
   "Cultural & Traditional Wear",
   "Sustainable & Eco-Friendly Fashion",
   "Bridal & Occasion Wear",
   "Custom-Made & Tailoring",
-  "Fashion Services (Styling, Rental, Alterations)",
+  "Fashion Services",
 ];
 
 const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
-  const [selectedTypes, setSelectedTypes] = useState(formData.brandType || []);
+  const [logoPreview, setLogoPreview] = useState(null);
 
   const handleBrandTypeChange = (event) => {
     const value = event.target.value;
-    setSelectedTypes(typeof value === "string" ? value.split(",") : value);
+    handleChange(
+      "brandType",
+      typeof value === "string" ? value.split(",") : value
+    );
   };
 
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       handleChange("logo", file);
+      const previewURL = URL.createObjectURL(file);
+      setLogoPreview(previewURL);
     }
   };
 
   useEffect(() => {
-    handleChange("brandType", selectedTypes);
-  }, [selectedTypes]);
+    const descWordCount = formData.description?.trim().split(/\s+/).length || 0;
+    const taglineWordCount = formData.tagline?.trim().split(/\s+/).length || 0;
 
-  useEffect(() => {
     const valid =
-      selectedTypes.length > 0 &&
+      formData.brandType?.length > 0 &&
       formData.description &&
+      descWordCount <= 100 &&
       formData.tagline &&
-      formData.description.trim().split(/\s+/).length <= 100 &&
-      formData.tagline.trim().split(/\s+/).length <= 10;
+      taglineWordCount <= 10;
+
     setStepValid(valid);
-  }, [selectedTypes, formData.description, formData.tagline]);
+  }, [formData.brandType, formData.description, formData.tagline]);
 
   return (
     <Box>
@@ -64,46 +68,54 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
         Brand Information
       </Typography>
 
-      <FormControl
+      <Typography
+        variant="body2"
+        fontWeight="bold"
+        mt={2}>
+        Brand Type
+      </Typography>
+      <Select
+        multiple
+        value={formData.brandType || []}
+        onChange={handleBrandTypeChange}
+        input={<OutlinedInput />}
         fullWidth
-        margin="normal">
-        <InputLabel>Brand Type</InputLabel>
-        <Select
-          multiple
-          value={selectedTypes}
-          onChange={handleBrandTypeChange}
-          input={<OutlinedInput label="Brand Type" />}
-          renderValue={(selected) => (
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {selected.map((value) => (
-                <Chip
-                  key={value}
-                  label={value}
-                />
-              ))}
-            </Box>
-          )}>
-          {brandOptions.map((option) => (
-            <MenuItem
-              key={option}
-              value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+        renderValue={(selected) => (
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+            {selected.map((value) => (
+              <Chip
+                key={value}
+                label={value}
+                size="small"
+                onDelete={() =>
+                  handleChange(
+                    "brandType",
+                    formData.brandType.filter((item) => item !== value)
+                  )
+                }
+              />
+            ))}
+          </Box>
+        )}>
+        {brandTypeOptions.map((option) => (
+          <MenuItem
+            key={option}
+            value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+      <FormHelperText>Select one or more brand types</FormHelperText>
 
       <TextField
         label="Brand Description"
         fullWidth
         multiline
-        rows={3}
+        rows={4}
         margin="normal"
         value={formData.description || ""}
         onChange={(e) => handleChange("description", e.target.value)}
-        helperText={`Max 100 words (${
-          formData.description?.trim().split(/\s+/).length || 0
-        }/100)`}
+        helperText="Max 100 words"
       />
 
       <TextField
@@ -112,13 +124,11 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
         margin="normal"
         value={formData.tagline || ""}
         onChange={(e) => handleChange("tagline", e.target.value)}
-        helperText={`Max 10 words (${
-          formData.tagline?.trim().split(/\s+/).length || 0
-        }/10)`}
+        helperText="Max 10 words"
       />
 
       <TextField
-        label="Website (Optional)"
+        label="Brand Website (optional)"
         fullWidth
         margin="normal"
         value={formData.website || ""}
@@ -126,21 +136,19 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
       />
 
       <Box
-        mt={3}
         sx={{
-          border: "2px dashed #ccc",
+          border: "1px solid #ccc",
           borderRadius: 2,
-          height: 150,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          p: 4,
+          mt: 3,
+          textAlign: "center",
           position: "relative",
         }}>
         <input
-          type="file"
           accept="image/*"
-          style={{ display: "none" }}
+          type="file"
           id="logo-upload"
+          style={{ display: "none" }}
           onChange={handleLogoUpload}
         />
         <label htmlFor="logo-upload">
@@ -153,22 +161,25 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
               height: 50,
               "&:hover": { backgroundColor: "#b71c1c" },
             }}>
-            <CloudUploadIcon />
+            <FiUpload />
           </IconButton>
         </label>
-        {formData.logo && (
-          <Typography
-            variant="body2"
-            sx={{
-              position: "absolute",
-              bottom: 8,
-              textAlign: "center",
-              width: "100%",
-            }}>
-            {formData.logo.name}
-          </Typography>
-        )}
+        <Typography
+          variant="body2"
+          mt={1}>
+          Upload Brand Logo (optional)
+        </Typography>
       </Box>
+
+      {logoPreview && (
+        <Box sx={{ mt: 2, textAlign: "center" }}>
+          <img
+            src={logoPreview}
+            alt="Brand Logo Preview"
+            style={{ maxWidth: "200px", borderRadius: "8px" }}
+          />
+        </Box>
+      )}
     </Box>
   );
 };

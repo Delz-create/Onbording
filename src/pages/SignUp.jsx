@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import OnboardingLayout from "../components/onboarding/OnboardingLayout";
+import OnboardingLayout from "../layouts/OnboardingLayout";
 import Step1AccountSetup from "../components/onboarding/Step1AccountSetup";
 import Step2BrandInfo from "../components/onboarding/Step2BrandInfo";
 
