@@ -31,7 +31,7 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
   const handleBrandTypeChange = (event) => {
     const value = event.target.value;
     handleChange(
-      "brandTypes", // ✅ plural to match preview
+      "brandTypes",
       typeof value === "string" ? value.split(",") : value
     );
   };
@@ -40,25 +40,10 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
     const file = e.target.files[0];
     if (file) {
       handleChange("brandLogo", file);
-
       const previewURL = URL.createObjectURL(file);
       setLogoPreview(previewURL);
-
-      // 🔹 Convert file to Base64 and store
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        localStorage.setItem("brandLogoPreview", reader.result);
-      };
-      reader.readAsDataURL(file);
     }
   };
-
-  useEffect(() => {
-    const storedPreview = localStorage.getItem("brandLogoPreview");
-    if (storedPreview) {
-      setLogoPreview(storedPreview);
-    }
-  }, []);
 
   useEffect(() => {
     const descWordCount =
@@ -92,7 +77,6 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
         Brand Information
       </Typography>
 
-      {/* Brand Type */}
       <Typography
         variant="body2"
         fontWeight="bold"
@@ -144,7 +128,6 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
       </Select>
       <FormHelperText>Select one or more brand types</FormHelperText>
 
-      {/* Brand Description */}
       <Box position="relative">
         <TextField
           label="Brand Description"
@@ -165,7 +148,6 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
         </Typography>
       </Box>
 
-      {/* Tagline */}
       <Box position="relative">
         <TextField
           label="Tagline"
@@ -183,7 +165,6 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
         </Typography>
       </Box>
 
-      {/* Website */}
       <TextField
         label="Brand Website (optional)"
         fullWidth
@@ -192,7 +173,6 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
         onChange={(e) => handleChange("brandWebsite", e.target.value)}
       />
 
-      {/* Logo Upload */}
       <Box
         sx={{
           border: "1px solid #ccc",
@@ -254,7 +234,6 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
             onClick={() => {
               handleChange("brandLogo", null);
               setLogoPreview(null);
-              localStorage.removeItem("brandLogoPreview"); // 🔹 remove stored preview
             }}>
             ✕
           </IconButton>

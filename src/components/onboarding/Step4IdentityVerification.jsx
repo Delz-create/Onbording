@@ -11,7 +11,6 @@ const Step4IdentityVerification = ({
   const [govIDName, setGovIDName] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
 
-  // Business Registration Doc (Optional)
   const handleBusinessDocUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
@@ -20,7 +19,6 @@ const Step4IdentityVerification = ({
     }
   };
 
-  // Government ID (Required)
   const handleGovIDUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
@@ -29,7 +27,6 @@ const Step4IdentityVerification = ({
     }
   };
 
-  // Selfie / Passport Photo (Required)
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
@@ -38,7 +35,6 @@ const Step4IdentityVerification = ({
     }
   };
 
-  // Validation
   useEffect(() => {
     const valid = !!formData.govID && !!formData.selfieOrPassport;
     setStepValid(valid);
@@ -53,7 +49,6 @@ const Step4IdentityVerification = ({
         Identity Verification
       </Typography>
 
-      {/* Business Registration Document - Optional */}
       <Box
         sx={{
           border: "1px solid #ccc",
@@ -103,7 +98,6 @@ const Step4IdentityVerification = ({
         </Box>
       )}
 
-      {/* Government-issued ID - Required */}
       <Box
         sx={{
           border: "1px solid #ccc",
@@ -153,7 +147,6 @@ const Step4IdentityVerification = ({
         </Box>
       )}
 
-      {/* Live Selfie / Passport Photo - Required */}
       <Box
         sx={{
           border: "1px solid #ccc",

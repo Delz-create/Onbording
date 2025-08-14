@@ -16,24 +16,26 @@ import { PictureAsPdf } from "@mui/icons-material";
 
 const Step6FinalReview = ({
   formData,
-  setStep,
+  // setStep,
   //   setStepValid,
   onSubmitFinal,
 }) => {
   const [agreed, setAgreed] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [
+    // pendingStep,
+    setPendingStep,
+  ] = useState(null);
 
   const handleSubmit = () => {
     const payload = new FormData();
 
-    // Append text fields
     for (const key in formData) {
       if (formData[key] && !(formData[key] instanceof File)) {
         payload.append(key, formData[key]);
       }
     }
 
-    // Append files
     for (const key in formData) {
       if (formData[key] instanceof File) {
         payload.append(key, formData[key]);
@@ -45,6 +47,32 @@ const Step6FinalReview = ({
 
   const renderFile = (file) => {
     if (!file) return "—";
+
+    if (typeof file === "string") {
+      if (file.toLowerCase().endsWith(".pdf")) {
+        return (
+          <Box
+            display="flex"
+            alignItems="center"
+            gap={1}>
+            <PictureAsPdf color="error" />
+            <Typography variant="body2">{file.split("/").pop()}</Typography>
+          </Box>
+        );
+      }
+      return (
+        <img
+          src={file}
+          alt="Preview"
+          style={{
+            maxWidth: "120px",
+            maxHeight: "120px",
+            borderRadius: "8px",
+            objectFit: "cover",
+          }}
+        />
+      );
+    }
 
     const type = file.type?.toLowerCase() || "";
     if (type.includes("pdf")) {
@@ -96,7 +124,7 @@ const Step6FinalReview = ({
         { label: "Brand Description", value: formData.brandDescription },
         { label: "Tagline", value: formData.tagline },
         { label: "Brand Website", value: formData.brandWebsite },
-        { label: "Brand Logo", file: formData.brandLogo }, // image
+        { label: "Brand Logo", file: formData.brandLogo }, 
       ],
     },
     {
@@ -105,12 +133,12 @@ const Step6FinalReview = ({
       fields: [
         {
           label: "Business Registration Document",
-          file: formData.businessRegDoc,
-        }, // pdf or image
-        { label: "Physical Store Photo", file: formData.physicalStore }, // image
+          file: formData.businessDoc,
+        }, 
+        { label: "Physical Store Photo", file: formData.storeImage }, 
         {
           label: "Social Media Handles",
-          value: formData.socialMediaHandles?.join(", "),
+          value: formData.socialHandles?.join(", "),
         },
       ],
     },
@@ -121,16 +149,16 @@ const Step6FinalReview = ({
         {
           label: "Business Registration Document (PDF)",
           file: formData.identityBusinessDoc,
-        }, // pdf
-        { label: "Government-issued ID (PDF)", file: formData.govID }, // pdf
-        { label: "Selfie/Passport Photo", file: formData.selfieOrPassport }, // image
+        }, 
+        { label: "Government-issued ID (PDF)", file: formData.govID }, 
+        { label: "Selfie/Passport Photo", file: formData.selfieOrPassport },
       ],
     },
     {
       title: "Portfolio Submission",
       step: 4,
       fields: [
-        { label: "Lookbook", file: formData.lookbook }, // pdf or image
+        { label: "Lookbook", file: formData.lookbook }, 
         { label: "Portfolio Website", value: formData.portfolioWebsite },
       ],
     },
@@ -145,7 +173,6 @@ const Step6FinalReview = ({
         Final Review & Submit
       </Typography>
 
-      {/* Terms Agreement Toggle */}
       <FormControlLabel
         control={
           <Checkbox
@@ -160,14 +187,12 @@ const Step6FinalReview = ({
         label="I agree to the Terms & Conditions"
       />
 
-      {/* Preview & Submit Button */}
       <Button
         variant="outlined"
         onClick={() => setOpenDialog(true)}>
         Preview & Submit
       </Button>
 
-      {/* Preview Dialog */}
       <Dialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
@@ -191,8 +216,8 @@ const Step6FinalReview = ({
                 <Button
                   size="small"
                   onClick={() => {
+                    setPendingStep(section.step);
                     setOpenDialog(false);
-                    setTimeout(() => setStep(section.step), 100); // small delay to allow dialog close
                   }}>
                   Edit
                 </Button>

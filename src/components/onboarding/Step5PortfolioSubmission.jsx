@@ -6,7 +6,6 @@ const Step5PortfolioSubmission = ({ formData, handleChange, setStepValid }) => {
   const [lookbookName, setLookbookName] = useState(null);
   const [lookbookPreview, setLookbookPreview] = useState(null);
 
-  // Lookbook Upload (PDF or Image, Optional)
   const handleLookbookUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -21,7 +20,6 @@ const Step5PortfolioSubmission = ({ formData, handleChange, setStepValid }) => {
     }
   };
 
-  // Validation (optional fields so always valid)
   useEffect(() => {
     setStepValid(true);
   }, [setStepValid]);
@@ -35,7 +33,6 @@ const Step5PortfolioSubmission = ({ formData, handleChange, setStepValid }) => {
         Portfolio / Live Store Submission
       </Typography>
 
-      {/* Lookbook Upload */}
       <Box
         sx={{
           border: "1px solid #ccc",
@@ -72,7 +69,6 @@ const Step5PortfolioSubmission = ({ formData, handleChange, setStepValid }) => {
         </Typography>
       </Box>
 
-      {/* PDF Filename Preview */}
       {lookbookName && (
         <Box sx={{ mt: 1, textAlign: "center" }}>
           <Typography variant="caption">{lookbookName}</Typography>
@@ -87,7 +83,6 @@ const Step5PortfolioSubmission = ({ formData, handleChange, setStepValid }) => {
         </Box>
       )}
 
-      {/* Image Preview */}
       {lookbookPreview && (
         <Box
           sx={{
@@ -119,7 +114,6 @@ const Step5PortfolioSubmission = ({ formData, handleChange, setStepValid }) => {
         </Box>
       )}
 
-      {/* Website URL */}
       <Box mt={4}>
         <Typography
           variant="body2"

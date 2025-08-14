@@ -37,10 +37,13 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
   };
 
   useEffect(() => {
-    if (formData.username && formData.officialBrandName) {
-      const generatedID =
-        `${formData.username}${formData.officialBrandName}`.replace(/\s+/g, "");
-      handleChange("businessID", generatedID);
+    if (formData.username) {
+      let baseId = formData.username;
+      if (formData.officialBrandName) {
+        baseId += `-${formData.officialBrandName}`;
+      }
+      const brandId = baseId.replace(/\s+/g, "-").toLowerCase();
+      handleChange("businessID", brandId);
     }
   }, [formData.username, formData.officialBrandName]);
 
@@ -57,7 +60,7 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
       formData.businessEmail &&
       formData.username &&
       usernameStatus === "available" &&
-      formData.businessId &&
+      formData.businessID &&
       formData.address &&
       formData.country;
 
@@ -67,7 +70,7 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
     formData.businessEmail,
     formData.username,
     usernameStatus,
-    formData.businessId,
+    formData.businessID,
     formData.address,
     formData.country,
   ]);
@@ -125,7 +128,7 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
           label="Business ID"
           fullWidth
           margin="normal"
-          value={formData.businessId || ""}
+          value={formData.businessID || ""}
           InputProps={{ readOnly: true }}
         />
       </Box>

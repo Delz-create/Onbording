@@ -1,87 +1,61 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton, TextField, Button } from "@mui/material";
-import { FiUpload } from "react-icons/fi";
+import { CloudUpload } from "@mui/icons-material";
 
 const Step3BusinessVerification = ({
   formData,
   handleChange,
   setStepValid,
 }) => {
-  const [businessDocPreview, setBusinessDocPreview] = useState(null);
-  const [physicalStorePreview, setPhysicalStorePreview] = useState(null);
-  const [socialHandles, setSocialHandles] = useState(
-    formData.socialMediaHandles || [""]
+  const [docPreview, setDocPreview] = useState(null);
+  const [storePreview, setStorePreview] = useState(null);
+  const [socialInputs, setSocialInputs] = useState(
+    formData.socialHandles || [""]
   );
 
-  // Restore previews from localStorage on mount
-  useEffect(() => {
-    const storedDocPreview = localStorage.getItem("businessDocPreview");
-    if (storedDocPreview) setBusinessDocPreview(storedDocPreview);
-
-    const storedStorePreview = localStorage.getItem("physicalStorePreview");
-    if (storedStorePreview) setPhysicalStorePreview(storedStorePreview);
-  }, []);
-
-  // Handle Business Registration Document upload
-  const handleBusinessDocUpload = (e) => {
+  const handleDocUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      handleChange("businessRegistrationDocument", file);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result;
-        localStorage.setItem("businessDocPreview", base64);
-        setBusinessDocPreview(base64);
-      };
-      reader.readAsDataURL(file);
+      handleChange("businessDoc", file);
+      setDocPreview(URL.createObjectURL(file));
     }
   };
 
-  // Handle Physical Store Image upload
-  const handlePhysicalStoreUpload = (e) => {
+  const handleStoreUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      handleChange("physicalStoreImage", file);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result;
-        localStorage.setItem("physicalStorePreview", base64);
-        setPhysicalStorePreview(base64);
-      };
-      reader.readAsDataURL(file);
+      handleChange("storeImage", file);
+      setStorePreview(URL.createObjectURL(file));
     }
   };
 
-  // Handle Social Media Handles input
   const handleSocialChange = (index, value) => {
-    const updatedHandles = [...socialHandles];
-    updatedHandles[index] = value;
-    setSocialHandles(updatedHandles);
-    handleChange("socialMediaHandles", updatedHandles);
+    const updated = [...socialInputs];
+    updated[index] = value;
+    setSocialInputs(updated);
+    handleChange(
+      "socialHandles",
+      updated.filter((v) => v.trim() !== "")
+    );
   };
 
-  const addSocialHandle = () => {
-    setSocialHandles([...socialHandles, ""]);
+  const addSocialField = () => {
+    setSocialInputs([...socialInputs, ""]);
   };
 
-  const removeSocialHandle = (index) => {
-    const updatedHandles = socialHandles.filter((_, i) => i !== index);
-    setSocialHandles(updatedHandles);
-    handleChange("socialMediaHandles", updatedHandles);
+  const removeSocialField = (index) => {
+    const updated = socialInputs.filter((_, i) => i !== index);
+    setSocialInputs(updated);
+    handleChange(
+      "socialHandles",
+      updated.filter((v) => v.trim() !== "")
+    );
   };
 
-  // Validate step (Business Registration Document is required)
   useEffect(() => {
-    const valid = !!formData.businessRegistrationDocument;
+    const valid = !!formData.businessDoc;
     setStepValid(valid);
-  }, [formData.businessRegistrationDocument, setStepValid]);
-
-  // Helper to detect if PDF
-  const isPDF = (base64String) => {
-    return base64String?.startsWith("data:application/pdf");
-  };
+  }, [formData.businessDoc, setStepValid]);
 
   return (
     <Box>
@@ -92,7 +66,6 @@ const Step3BusinessVerification = ({
         Business Verification
       </Typography>
 
-      {/* Business Registration Document */}
       <Box
         sx={{
           border: "1px solid #ccc",
@@ -103,13 +76,13 @@ const Step3BusinessVerification = ({
           position: "relative",
         }}>
         <input
-          accept="image/*,application/pdf"
+          accept="image/*,.pdf"
           type="file"
-          id="business-doc-upload"
+          id="doc-upload"
           style={{ display: "none" }}
-          onChange={handleBusinessDocUpload}
+          onChange={handleDocUpload}
         />
-        <label htmlFor="business-doc-upload">
+        <label htmlFor="doc-upload">
           <IconButton
             component="span"
             sx={{
@@ -119,95 +92,16 @@ const Step3BusinessVerification = ({
               height: 50,
               "&:hover": { backgroundColor: "#b71c1c" },
             }}>
-            <FiUpload />
+            <CloudUpload />
           </IconButton>
         </label>
         <Typography
           variant="body2"
           mt={1}>
-          Upload Business Registration Document (required)
+          Upload Business Registration Document (Required)
         </Typography>
       </Box>
-
-      {businessDocPreview && (
-        <Box
-          sx={{
-            mt: 2,
-            textAlign: "center",
-            position: "relative",
-            display: "inline-block",
-          }}>
-          {isPDF(businessDocPreview) ? (
-            <a
-              href={businessDocPreview}
-              target="_blank"
-              rel="noopener noreferrer">
-              View PDF
-            </a>
-          ) : (
-            <img
-              src={businessDocPreview}
-              alt="Business Document Preview"
-              style={{ maxWidth: "200px", borderRadius: "8px" }}
-            />
-          )}
-          <IconButton
-            size="small"
-            sx={{
-              position: "absolute",
-              top: -8,
-              right: -8,
-              backgroundColor: "#fff",
-              "&:hover": { backgroundColor: "#f5f5f5" },
-            }}
-            onClick={() => {
-              handleChange("businessRegistrationDocument", null);
-              setBusinessDocPreview(null);
-              localStorage.removeItem("businessDocPreview");
-            }}>
-            ✕
-          </IconButton>
-        </Box>
-      )}
-
-      {/* Physical Store Upload */}
-      <Box
-        sx={{
-          border: "1px solid #ccc",
-          borderRadius: 2,
-          p: 4,
-          mt: 3,
-          textAlign: "center",
-          position: "relative",
-        }}>
-        <input
-          accept="image/*"
-          type="file"
-          id="physical-store-upload"
-          style={{ display: "none" }}
-          onChange={handlePhysicalStoreUpload}
-        />
-        <label htmlFor="physical-store-upload">
-          <IconButton
-            component="span"
-            sx={{
-              backgroundColor: "red",
-              color: "#fff",
-              width: 50,
-              height: 50,
-              "&:hover": { backgroundColor: "#b71c1c" },
-            }}>
-            <FiUpload />
-          </IconButton>
-        </label>
-        <Typography
-          variant="body2"
-          mt={1}>
-          Upload Physical Store Image (optional)
-        </Typography>
-      </Box>
-
-      {physicalStorePreview && (
+      {docPreview && (
         <Box
           sx={{
             mt: 2,
@@ -216,8 +110,8 @@ const Step3BusinessVerification = ({
             display: "inline-block",
           }}>
           <img
-            src={physicalStorePreview}
-            alt="Physical Store Preview"
+            src={docPreview}
+            alt="Business Document Preview"
             style={{ maxWidth: "200px", borderRadius: "8px" }}
           />
           <IconButton
@@ -230,43 +124,114 @@ const Step3BusinessVerification = ({
               "&:hover": { backgroundColor: "#f5f5f5" },
             }}
             onClick={() => {
-              handleChange("physicalStoreImage", null);
-              setPhysicalStorePreview(null);
-              localStorage.removeItem("physicalStorePreview");
+              handleChange("businessDoc", null);
+              setDocPreview(null);
             }}>
             ✕
           </IconButton>
         </Box>
       )}
 
-      {/* Social Media Handles */}
-      <Typography
-        variant="body2"
-        fontWeight="bold"
-        mt={4}>
-        Social Media Handles (optional)
-      </Typography>
-      {socialHandles.map((handle, index) => (
+      <Box
+        sx={{
+          border: "1px solid #ccc",
+          borderRadius: 2,
+          p: 4,
+          mt: 4,
+          textAlign: "center",
+          position: "relative",
+        }}>
+        <input
+          accept="image/*"
+          type="file"
+          id="store-upload"
+          style={{ display: "none" }}
+          onChange={handleStoreUpload}
+        />
+        <label htmlFor="store-upload">
+          <IconButton
+            component="span"
+            sx={{
+              backgroundColor: "red",
+              color: "#fff",
+              width: 50,
+              height: 50,
+              "&:hover": { backgroundColor: "#b71c1c" },
+            }}>
+            <CloudUpload />
+          </IconButton>
+        </label>
+        <Typography
+          variant="body2"
+          mt={1}>
+          Upload Physical Store Image (Optional)
+        </Typography>
+      </Box>
+      {storePreview && (
         <Box
-          key={index}
-          sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-          <TextField
-            fullWidth
-            placeholder="Enter social media handle/link"
-            value={handle}
-            onChange={(e) => handleSocialChange(index, e.target.value)}
+          sx={{
+            mt: 2,
+            textAlign: "center",
+            position: "relative",
+            display: "inline-block",
+          }}>
+          <img
+            src={storePreview}
+            alt="Store Preview"
+            style={{ maxWidth: "200px", borderRadius: "8px" }}
           />
-          {index > 0 && (
-            <IconButton onClick={() => removeSocialHandle(index)}>✕</IconButton>
-          )}
+          <IconButton
+            size="small"
+            sx={{
+              position: "absolute",
+              top: -8,
+              right: -8,
+              backgroundColor: "#fff",
+              "&:hover": { backgroundColor: "#f5f5f5" },
+            }}
+            onClick={() => {
+              handleChange("storeImage", null);
+              setStorePreview(null);
+            }}>
+            ✕
+          </IconButton>
         </Box>
-      ))}
-      <Button
-        variant="text"
-        onClick={addSocialHandle}
-        sx={{ mt: 1, color: "red" }}>
-        + Add Another
-      </Button>
+      )}
+
+      <Box mt={4}>
+        <Typography
+          variant="body2"
+          fontWeight="bold"
+          mb={1}>
+          Social Media Handles (Optional)
+        </Typography>
+        {socialInputs.map((handle, index) => (
+          <Box
+            key={index}
+            display="flex"
+            alignItems="center"
+            mb={1}>
+            <TextField
+              fullWidth
+              value={handle}
+              onChange={(e) => handleSocialChange(index, e.target.value)}
+              placeholder="@yourhandle"
+            />
+            <IconButton
+              onClick={() => removeSocialField(index)}
+              sx={{ ml: 1 }}>
+              ✕
+            </IconButton>
+          </Box>
+        ))}
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={addSocialField}
+          sx={{ mt: 1 }}>
+          + Add another
+        </Button>
+      </Box>
     </Box>
   );
 };
