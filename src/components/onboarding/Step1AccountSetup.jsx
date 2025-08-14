@@ -37,13 +37,10 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
   };
 
   useEffect(() => {
-    if (formData.username) {
-      let baseId = formData.username;
-      if (formData.officialBrandName) {
-        baseId += `-${formData.officialBrandName}`;
-      }
-      const brandId = baseId.replace(/\s+/g, "-").toLowerCase();
-      handleChange("businessId", brandId);
+    if (formData.username && formData.officialBrandName) {
+      const generatedID =
+        `${formData.username}${formData.officialBrandName}`.replace(/\s+/g, "");
+      handleChange("businessID", generatedID);
     }
   }, [formData.username, formData.officialBrandName]);
 
@@ -80,7 +77,10 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
       <Typography
         variant="h6"
         fontWeight="bold"
-        mb={3}>
+        mb={3}
+        sx={{
+          color: "#111",
+        }}>
         Account Setup
       </Typography>
 
@@ -155,9 +155,7 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
         formData.address &&
         formData.country
       ) && (
-        <Alert
-          severity="info"
-          sx={{ mt: 2 }}>
+        <Alert sx={{ mt: 2, backgroundColor: "#f67676", color: "#B71C1C" }}>
           Please complete all fields and choose an available username to
           continue.
         </Alert>

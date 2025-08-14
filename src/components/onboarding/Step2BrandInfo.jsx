@@ -31,7 +31,7 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
   const handleBrandTypeChange = (event) => {
     const value = event.target.value;
     handleChange(
-      "brandType",
+      "brandTypes", // ✅ plural to match preview
       typeof value === "string" ? value.split(",") : value
     );
   };
@@ -39,35 +39,60 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      handleChange("logo", file);
+      handleChange("brandLogo", file);
+
       const previewURL = URL.createObjectURL(file);
       setLogoPreview(previewURL);
+
+      // 🔹 Convert file to Base64 and store
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        localStorage.setItem("brandLogoPreview", reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   useEffect(() => {
-    const descWordCount = formData.description?.trim().split(/\s+/).length || 0;
-    const taglineWordCount = formData.tagline?.trim().split(/\s+/).length || 0;
+    const storedPreview = localStorage.getItem("brandLogoPreview");
+    if (storedPreview) {
+      setLogoPreview(storedPreview);
+    }
+  }, []);
+
+  useEffect(() => {
+    const descWordCount =
+      formData.brandDescription?.trim().split(/\s+/).filter(Boolean).length ||
+      0;
+    const taglineWordCount =
+      formData.tagline?.trim().split(/\s+/).filter(Boolean).length || 0;
 
     const valid =
-      formData.brandType?.length > 0 &&
-      formData.description &&
+      formData.brandTypes?.length > 0 &&
+      formData.brandDescription &&
       descWordCount <= 100 &&
       formData.tagline &&
       taglineWordCount <= 10;
 
     setStepValid(valid);
-  }, [formData.brandType, formData.description, formData.tagline]);
+  }, [
+    formData.brandTypes,
+    formData.brandDescription,
+    formData.tagline,
+    setStepValid,
+  ]);
 
   return (
     <Box>
       <Typography
         variant="h6"
         fontWeight="bold"
-        mb={3}>
+        mb={3}
+        sx={{ color: "#111" }}>
         Brand Information
       </Typography>
 
+      {/* Brand Type */}
       <Typography
         variant="body2"
         fontWeight="bold"
@@ -76,27 +101,39 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
       </Typography>
       <Select
         multiple
-        value={formData.brandType || []}
+        displayEmpty
+        value={formData.brandTypes || []}
         onChange={handleBrandTypeChange}
         input={<OutlinedInput />}
         fullWidth
-        renderValue={(selected) => (
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-            {selected.map((value) => (
-              <Chip
-                key={value}
-                label={value}
-                size="small"
-                onDelete={() =>
-                  handleChange(
-                    "brandType",
-                    formData.brandType.filter((item) => item !== value)
-                  )
-                }
-              />
-            ))}
-          </Box>
-        )}>
+        renderValue={(selected) => {
+          if (!selected.length)
+            return (
+              <Typography sx={{ color: "#888" }}>Select brand type</Typography>
+            );
+          return (
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+              {selected.map((value) => (
+                <Chip
+                  key={value}
+                  label={value}
+                  size="small"
+                  onDelete={() =>
+                    handleChange(
+                      "brandTypes",
+                      formData.brandTypes.filter((item) => item !== value)
+                    )
+                  }
+                />
+              ))}
+            </Box>
+          );
+        }}
+        MenuProps={{
+          PaperProps: {
+            style: { maxHeight: 300 },
+          },
+        }}>
         {brandTypeOptions.map((option) => (
           <MenuItem
             key={option}
@@ -107,34 +144,55 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
       </Select>
       <FormHelperText>Select one or more brand types</FormHelperText>
 
-      <TextField
-        label="Brand Description"
-        fullWidth
-        multiline
-        rows={4}
-        margin="normal"
-        value={formData.description || ""}
-        onChange={(e) => handleChange("description", e.target.value)}
-        helperText="Max 100 words"
-      />
+      {/* Brand Description */}
+      <Box position="relative">
+        <TextField
+          label="Brand Description"
+          fullWidth
+          multiline
+          rows={4}
+          margin="normal"
+          value={formData.brandDescription || ""}
+          onChange={(e) => handleChange("brandDescription", e.target.value)}
+          helperText="Max 100 words"
+        />
+        <Typography
+          variant="caption"
+          sx={{ position: "absolute", bottom: 8, right: 12, color: "#888" }}>
+          {formData.brandDescription?.trim().split(/\s+/).filter(Boolean)
+            .length || 0}
+          /100
+        </Typography>
+      </Box>
 
-      <TextField
-        label="Tagline"
-        fullWidth
-        margin="normal"
-        value={formData.tagline || ""}
-        onChange={(e) => handleChange("tagline", e.target.value)}
-        helperText="Max 10 words"
-      />
+      {/* Tagline */}
+      <Box position="relative">
+        <TextField
+          label="Tagline"
+          fullWidth
+          margin="normal"
+          value={formData.tagline || ""}
+          onChange={(e) => handleChange("tagline", e.target.value)}
+          helperText="Max 10 words"
+        />
+        <Typography
+          variant="caption"
+          sx={{ position: "absolute", bottom: 8, right: 12, color: "#888" }}>
+          {formData.tagline?.trim().split(/\s+/).filter(Boolean).length || 0}
+          /10
+        </Typography>
+      </Box>
 
+      {/* Website */}
       <TextField
         label="Brand Website (optional)"
         fullWidth
         margin="normal"
-        value={formData.website || ""}
-        onChange={(e) => handleChange("website", e.target.value)}
+        value={formData.brandWebsite || ""}
+        onChange={(e) => handleChange("brandWebsite", e.target.value)}
       />
 
+      {/* Logo Upload */}
       <Box
         sx={{
           border: "1px solid #ccc",
@@ -172,12 +230,34 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
       </Box>
 
       {logoPreview && (
-        <Box sx={{ mt: 2, textAlign: "center" }}>
+        <Box
+          sx={{
+            mt: 2,
+            textAlign: "center",
+            position: "relative",
+            display: "inline-block",
+          }}>
           <img
             src={logoPreview}
             alt="Brand Logo Preview"
             style={{ maxWidth: "200px", borderRadius: "8px" }}
           />
+          <IconButton
+            size="small"
+            sx={{
+              position: "absolute",
+              top: -8,
+              right: -8,
+              backgroundColor: "#fff",
+              "&:hover": { backgroundColor: "#f5f5f5" },
+            }}
+            onClick={() => {
+              handleChange("brandLogo", null);
+              setLogoPreview(null);
+              localStorage.removeItem("brandLogoPreview"); // 🔹 remove stored preview
+            }}>
+            ✕
+          </IconButton>
         </Box>
       )}
     </Box>
