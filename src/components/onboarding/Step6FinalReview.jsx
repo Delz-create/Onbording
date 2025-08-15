@@ -13,19 +13,11 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { PictureAsPdf } from "@mui/icons-material";
+import { getReviewSections } from "./reviewSections";
 
-const Step6FinalReview = ({
-  formData,
-  // setStep,
-  //   setStepValid,
-  onSubmitFinal,
-}) => {
+const Step6FinalReview = ({ formData, setStep, onSubmitFinal }) => {
   const [agreed, setAgreed] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [
-    // pendingStep,
-    setPendingStep,
-  ] = useState(null);
 
   const handleSubmit = () => {
     const payload = new FormData();
@@ -45,24 +37,53 @@ const Step6FinalReview = ({
     onSubmitFinal(payload);
   };
 
-  const renderFile = (file) => {
-    if (!file) return "—";
+  const renderFile = (fileData) => {
+    if (!fileData) return "—";
 
-    if (typeof file === "string") {
-      if (file.toLowerCase().endsWith(".pdf")) {
+    if (fileData?.preview) {
+      const type = fileData.file?.type?.toLowerCase() || "";
+      if (type.includes("pdf")) {
         return (
           <Box
             display="flex"
             alignItems="center"
             gap={1}>
             <PictureAsPdf color="error" />
-            <Typography variant="body2">{file.split("/").pop()}</Typography>
+            <Typography variant="body2">{fileData.file.name}</Typography>
+          </Box>
+        );
+      }
+      if (type.includes("image")) {
+        return (
+          <img
+            src={fileData.preview}
+            alt="Preview"
+            style={{
+              maxWidth: "120px",
+              maxHeight: "120px",
+              borderRadius: "8px",
+              objectFit: "cover",
+            }}
+          />
+        );
+      }
+    }
+
+    if (typeof fileData === "string") {
+      if (fileData.toLowerCase().endsWith(".pdf")) {
+        return (
+          <Box
+            display="flex"
+            alignItems="center"
+            gap={1}>
+            <PictureAsPdf color="error" />
+            <Typography variant="body2">{fileData.split("/").pop()}</Typography>
           </Box>
         );
       }
       return (
         <img
-          src={file}
+          src={fileData}
           alt="Preview"
           style={{
             maxWidth: "120px",
@@ -74,95 +95,39 @@ const Step6FinalReview = ({
       );
     }
 
-    const type = file.type?.toLowerCase() || "";
-    if (type.includes("pdf")) {
-      return (
-        <Box
-          display="flex"
-          alignItems="center"
-          gap={1}>
-          <PictureAsPdf color="error" />
-          <Typography variant="body2">{file.name}</Typography>
-        </Box>
-      );
+    if (fileData instanceof File) {
+      const type = fileData.type?.toLowerCase() || "";
+      if (type.includes("pdf")) {
+        return (
+          <Box
+            display="flex"
+            alignItems="center"
+            gap={1}>
+            <PictureAsPdf color="error" />
+            <Typography variant="body2">{fileData.name}</Typography>
+          </Box>
+        );
+      }
+      if (type.includes("image")) {
+        return (
+          <img
+            src={URL.createObjectURL(fileData)}
+            alt="Preview"
+            style={{
+              maxWidth: "120px",
+              maxHeight: "120px",
+              borderRadius: "8px",
+              objectFit: "cover",
+            }}
+          />
+        );
+      }
     }
-    if (type.includes("image")) {
-      return (
-        <img
-          src={URL.createObjectURL(file)}
-          alt="Preview"
-          style={{
-            maxWidth: "120px",
-            maxHeight: "120px",
-            borderRadius: "8px",
-            objectFit: "cover",
-          }}
-        />
-      );
-    }
-    return <Typography variant="body2">{file.name}</Typography>;
+
+    return <Typography variant="body2">{fileData.name || "—"}</Typography>;
   };
 
-  const sections = [
-    {
-      title: "Account Setup",
-      step: 0,
-      fields: [
-        { label: "Official Brand Name", value: formData.officialBrandName },
-        { label: "Business Email", value: formData.businessEmail },
-        { label: "Username", value: formData.username },
-        { label: "Business ID", value: formData.businessID },
-        { label: "Address", value: formData.address },
-        { label: "Country of Registration", value: formData.country },
-      ],
-    },
-    {
-      title: "Brand Information",
-      step: 1,
-      fields: [
-        { label: "Brand Type(s)", value: formData.brandTypes?.join(", ") },
-        { label: "Brand Description", value: formData.brandDescription },
-        { label: "Tagline", value: formData.tagline },
-        { label: "Brand Website", value: formData.brandWebsite },
-        { label: "Brand Logo", file: formData.brandLogo }, 
-      ],
-    },
-    {
-      title: "Business Verification",
-      step: 2,
-      fields: [
-        {
-          label: "Business Registration Document",
-          file: formData.businessDoc,
-        }, 
-        { label: "Physical Store Photo", file: formData.storeImage }, 
-        {
-          label: "Social Media Handles",
-          value: formData.socialHandles?.join(", "),
-        },
-      ],
-    },
-    {
-      title: "Identity Verification",
-      step: 3,
-      fields: [
-        {
-          label: "Business Registration Document (PDF)",
-          file: formData.identityBusinessDoc,
-        }, 
-        { label: "Government-issued ID (PDF)", file: formData.govID }, 
-        { label: "Selfie/Passport Photo", file: formData.selfieOrPassport },
-      ],
-    },
-    {
-      title: "Portfolio Submission",
-      step: 4,
-      fields: [
-        { label: "Lookbook", file: formData.lookbook }, 
-        { label: "Portfolio Website", value: formData.portfolioWebsite },
-      ],
-    },
-  ];
+  const sections = getReviewSections(formData);
 
   return (
     <Box>
@@ -216,8 +181,10 @@ const Step6FinalReview = ({
                 <Button
                   size="small"
                   onClick={() => {
-                    setPendingStep(section.step);
                     setOpenDialog(false);
+                    setTimeout(() => {
+                      setStep(section.step);
+                    }, 0);
                   }}>
                   Edit
                 </Button>

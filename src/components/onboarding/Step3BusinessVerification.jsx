@@ -13,19 +13,36 @@ const Step3BusinessVerification = ({
     formData.socialHandles || [""]
   );
 
+  useEffect(() => {
+    if (formData.businessDoc?.preview) {
+      setDocPreview(formData.businessDoc.preview);
+    }
+    if (formData.storeImage?.preview) {
+      setStorePreview(formData.storeImage.preview);
+    }
+  }, [formData.businessDoc, formData.storeImage]);
+
   const handleDocUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      handleChange("businessDoc", file);
-      setDocPreview(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleChange("businessDoc", { file, preview: reader.result });
+        setDocPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleStoreUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      handleChange("storeImage", file);
-      setStorePreview(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleChange("storeImage", { file, preview: reader.result });
+        setStorePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 

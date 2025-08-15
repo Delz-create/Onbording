@@ -104,7 +104,7 @@ const SignUp = () => {
     <Step6FinalReview
       key={5}
       formData={formData}
-      // setStep={setStep}
+      setStep={setActiveStep}
       setStepValid={setStepValid}
       onSubmitFinal={(payload) => {
         fetch("https://api.pozse.com/api/v1/onboarding", {

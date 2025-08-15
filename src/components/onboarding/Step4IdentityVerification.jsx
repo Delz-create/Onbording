@@ -11,27 +11,51 @@ const Step4IdentityVerification = ({
   const [govIDName, setGovIDName] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
 
+  useEffect(() => {
+    if (formData.identityBusinessDoc?.file) {
+      setBusinessDocName(formData.identityBusinessDoc.file.name);
+    }
+    if (formData.govID?.file) {
+      setGovIDName(formData.govID.file.name);
+    }
+    if (formData.selfieOrPassport?.preview) {
+      setPhotoPreview(formData.selfieOrPassport.preview);
+    }
+  }, [formData.identityBusinessDoc, formData.govID, formData.selfieOrPassport]);
+
   const handleBusinessDocUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
-      handleChange("identityBusinessDoc", file);
-      setBusinessDocName(file.name);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleChange("identityBusinessDoc", { file, preview: reader.result });
+        setBusinessDocName(file.name);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleGovIDUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
-      handleChange("govID", file);
-      setGovIDName(file.name);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleChange("govID", { file, preview: reader.result });
+        setGovIDName(file.name);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      handleChange("selfieOrPassport", file);
-      setPhotoPreview(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleChange("selfieOrPassport", { file, preview: reader.result });
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 

@@ -9,16 +9,33 @@ const Step5PortfolioSubmission = ({ formData, handleChange, setStepValid }) => {
   const handleLookbookUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      handleChange("lookbook", file);
+      const fileObj = {
+        file,
+        preview: file.type.startsWith("image/")
+          ? URL.createObjectURL(file)
+          : null,
+      };
+      handleChange("lookbook", fileObj);
+
       if (file.type === "application/pdf") {
         setLookbookName(file.name);
         setLookbookPreview(null);
       } else if (file.type.startsWith("image/")) {
-        setLookbookPreview(URL.createObjectURL(file));
+        setLookbookPreview(fileObj.preview);
         setLookbookName(null);
       }
     }
   };
+
+  useEffect(() => {
+    if (formData.lookbook) {
+      if (formData.lookbook.file?.type === "application/pdf") {
+        setLookbookName(formData.lookbook.file.name);
+      } else if (formData.lookbook.preview) {
+        setLookbookPreview(formData.lookbook.preview);
+      }
+    }
+  }, [formData.lookbook]);
 
   useEffect(() => {
     setStepValid(true);

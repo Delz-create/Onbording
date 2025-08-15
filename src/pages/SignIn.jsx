@@ -56,7 +56,7 @@ const SignIn = () => {
         setAlert({ type: "success", message: data.message });
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("email", data.user.email)
+        localStorage.setItem("email", data.user.email);
 
         setTimeout(() => {
           window.location.href = "/signup";
@@ -297,7 +297,12 @@ const SignIn = () => {
               <Button
                 variant="contained"
                 size="large"
-                onClick={() => window.open("https://play.google.com", "_blank")}
+                onClick={() =>
+                  window.open(
+                    "https://play.google.com/store/apps/details?id=com.pozse",
+                    "_blank"
+                  )
+                }
                 sx={{
                   backgroundColor: "#000",
                   color: "#fff",
@@ -334,7 +339,10 @@ const SignIn = () => {
                 variant="contained"
                 size="large"
                 onClick={() =>
-                  window.open("https://www.apple.com/app-store/", "_blank")
+                  window.open(
+                    "https://www.apple.com/ng/app/pozse/id677818101",
+                    "_blank"
+                  )
                 }
                 sx={{
                   backgroundColor: "#000",

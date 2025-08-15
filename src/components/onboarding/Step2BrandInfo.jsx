@@ -39,11 +39,20 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      handleChange("brandLogo", file);
-      const previewURL = URL.createObjectURL(file);
-      setLogoPreview(previewURL);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleChange("brandLogo", { file, preview: reader.result });
+        setLogoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
+
+  useEffect(() => {
+    if (formData.brandLogo?.preview) {
+      setLogoPreview(formData.brandLogo.preview);
+    }
+  }, [formData.brandLogo]);
 
   useEffect(() => {
     const descWordCount =
@@ -90,29 +99,9 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
         onChange={handleBrandTypeChange}
         input={<OutlinedInput />}
         fullWidth
-        renderValue={(selected) => {
-          if (!selected.length)
-            return (
-              <Typography sx={{ color: "#888" }}>Select brand type</Typography>
-            );
-          return (
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {selected.map((value) => (
-                <Chip
-                  key={value}
-                  label={value}
-                  size="small"
-                  onDelete={() =>
-                    handleChange(
-                      "brandTypes",
-                      formData.brandTypes.filter((item) => item !== value)
-                    )
-                  }
-                />
-              ))}
-            </Box>
-          );
-        }}
+        renderValue={() => (
+          <Typography sx={{ color: "#888" }}>Select brand type</Typography>
+        )}
         MenuProps={{
           PaperProps: {
             style: { maxHeight: 300 },
@@ -127,6 +116,23 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
         ))}
       </Select>
       <FormHelperText>Select one or more brand types</FormHelperText>
+
+      {/* Selected brand types below */}
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
+        {(formData.brandTypes || []).map((value) => (
+          <Chip
+            key={value}
+            label={value}
+            size="small"
+            onDelete={() =>
+              handleChange(
+                "brandTypes",
+                formData.brandTypes.filter((item) => item !== value)
+              )
+            }
+          />
+        ))}
+      </Box>
 
       <Box position="relative">
         <TextField
