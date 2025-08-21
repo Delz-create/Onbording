@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  TextField,
-  CircularProgress,
-  Typography,
-  Alert,
-} from "@mui/material";
+import { Box, TextField, Typography, Select, MenuItem } from "@mui/material";
 
 const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
   const [checkingUsername, setCheckingUsername] = useState(false);
