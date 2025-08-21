@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet";
 import OnboardingLayout from "../layouts/OnboardingLayout";
 import Step1AccountSetup from "../components/onboarding/Step1AccountSetup";
 import Step2BrandInfo from "../components/onboarding/Step2BrandInfo";
@@ -18,27 +18,28 @@ const SignUp = () => {
     return saved
       ? JSON.parse(saved)
       : {
-          officialBrandName: "",
+          businessName: "",
           businessEmail: "",
-          username: "",
-          businessId: "",
-          address: "",
-          country: "",
-          brandType: "",
-          description: "",
-          website: "",
-          logo: null,
-          registrationDoc: null,
-          declarationForm: null,
-          storePhoto: null,
-          socialLinks: {},
+          businessUsername: "",
+          businessAddress: "",
+          countryOfRegistration: "",
+
+          brandType: [],
+          brandDescription: "",
+          brandTagline: "",
+          brandWebsite: "",
+
+          brandLogo: null,
+          businessDoc: null,
+          storeImage: null,
           govID: null,
-          selfie: null,
-          repName: "",
-          repPosition: "",
+          selfieOrPassport: null,
           lookbook: null,
-          shopLink: "",
-          products: [],
+
+          facebook: "",
+          tiktok: "",
+          instagram: "",
+
           termsAccepted: false,
         };
   });
@@ -63,11 +64,6 @@ const SignUp = () => {
   const handleSaveDraft = () => {
     localStorage.setItem("onboardingDraft", JSON.stringify(formData));
     alert("Draft saved locally");
-  };
-
-  const handleSubmitAll = () => {
-    console.log("Final submit", formData);
-    localStorage.removeItem("onboardingData");
   };
 
   const steps = [
@@ -105,34 +101,29 @@ const SignUp = () => {
       key={5}
       formData={formData}
       setStep={setActiveStep}
-      setStepValid={setStepValid}
-      onSubmitFinal={(payload) => {
-        fetch("https://api.pozse.com/api/v1/onboarding", {
-          method: "POST",
-          body: payload,
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log("Submission result:", data);
-          })
-          .catch((err) => {
-            console.error("Submission error:", err);
-          });
-      }}
     />,
   ];
 
   return (
-    <OnboardingLayout
-      activeStep={activeStep}
-      totalSteps={totalSteps}
-      stepValid={stepValid}
-      onStepClick={handleStepClick}
-      onPrev={handleBack}
-      onNext={activeStep === totalSteps - 1 ? handleSubmitAll : handleNext}
-      onSaveDraft={handleSaveDraft}>
-      {steps[activeStep]}
-    </OnboardingLayout>
+    <>
+      <Helmet>
+        <title>Onboarding | Business registration</title>
+        <link
+          rel="icon"
+          href="/favicon.ico"
+        />
+      </Helmet>
+      <OnboardingLayout
+        activeStep={activeStep}
+        totalSteps={totalSteps}
+        stepValid={stepValid}
+        onStepClick={handleStepClick}
+        onPrev={handleBack}
+        onNext={handleNext}
+        onSaveDraft={handleSaveDraft}>
+        {steps[activeStep]}
+      </OnboardingLayout>
+    </>
   );
 };
 

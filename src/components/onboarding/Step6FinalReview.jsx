@@ -11,30 +11,156 @@ import {
   Divider,
   Checkbox,
   FormControlLabel,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { PictureAsPdf } from "@mui/icons-material";
+import { Snackbar, Alert as MuiAlert } from "@mui/material";
 import { getReviewSections } from "./reviewSections";
+import successImg from "../../assets/images/successImg.png";
 
-const Step6FinalReview = ({ formData, setStep, onSubmitFinal }) => {
+const Step6FinalReview = ({ formData, setStep }) => {
+  const infoWeCollect = [
+    {
+      id: 1,
+      text: "Personal Information: We collect personal information such as your name, email address and phone number when you create an account or contact us.",
+    },
+    {
+      id: 2,
+      text: "Usage Information: We collect information about your usage of our application including the features you use and the contents you interact with.",
+    },
+    {
+      id: 3,
+      text: "Device Information: We collect information about your device including the operating system, device type and IP address.",
+    },
+  ];
+
+  const infoUsage = [
+    {
+      id: 1,
+      text: "Provide And Improve Our Services: We use your information to provide and improve our services including personalized recommendations and contents.",
+    },
+    {
+      id: 2,
+      text: "Communicate With You: We use your information to communicate with you about our services including updates and notifications.",
+    },
+    {
+      id: 3,
+      text: "Marketing And Advertising: We use your information to send you marketing and advertising materials including promotional offers and discounts.",
+    },
+    {
+      id: 4,
+      text: "Compliance With Laws And Regulations: We use your information to comply with laws and regulations including responding to legal requests and preventing fraud.",
+    },
+  ];
+
+  const infoShare = [
+    {
+      id: 1,
+      text: "Third-Party Service Providers: We share your information with third-party service providers who work on our behalf to provide services such as data analysis and marketing.",
+    },
+    {
+      id: 2,
+      text: "Business Partners: We share your information with business partners who offers services and contents through our application.",
+    },
+    {
+      id: 3,
+      text: "Legal Requirement: We share your information when required by law such as in response to a subpoena or court order.",
+    },
+  ];
+
+  const yourRight = [
+    {
+      id: 1,
+      text: "Access And Correction: You have the right to access and correct your personal information.",
+    },
+    {
+      id: 2,
+      text: "Objection: You have the right to object to processing of your personal information.",
+    },
+  ];
   const [agreed, setAgreed] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+  });
 
-  const handleSubmit = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async () => {
     const payload = new FormData();
+    if (formData.brandLogo?.file)
+      payload.append("brandLogo", formData.brandLogo.file);
+    if (formData.businessDoc?.file)
+      payload.append("businessRegDoc", formData.businessDoc.file);
+    if (formData.storeImage?.file)
+      payload.append("businessPhysicalPic", formData.storeImage.file);
+    if (formData.govID?.file)
+      payload.append("govermentId", formData.govID.file);
+    if (formData.selfieOrPassport?.file)
+      payload.append("passportPhoto", formData.selfieOrPassport.file);
+    if (formData.lookbook?.file)
+      payload.append("lookbook", formData.lookbook.file);
 
-    for (const key in formData) {
-      if (formData[key] && !(formData[key] instanceof File)) {
-        payload.append(key, formData[key]);
-      }
+    payload.append("businessName", formData.officialBrandName || "");
+    payload.append("businessEmail", formData.businessEmail || "");
+    payload.append("businessUsername", formData.username || "");
+    payload.append("businessAddress", formData.address || "");
+    payload.append("countryOfRegistration", formData.country || "");
+
+    if (formData.brandTypes?.length) {
+      payload.append("brandType", formData.brandTypes.join(", "));
+    }
+    if (formData.brandDescription) {
+      payload.append("brandDescription", formData.brandDescription);
+    }
+    if (formData.tagline) {
+      payload.append("brandTagline", formData.tagline);
+    }
+    if (formData.brandWebsite) {
+      payload.append("brandWebsite", formData.brandWebsite);
     }
 
-    for (const key in formData) {
-      if (formData[key] instanceof File) {
-        payload.append(key, formData[key]);
-      }
+    if (formData.socialLinks?.facebook) {
+      payload.append("facebook", formData.socialLinks.facebook);
+    }
+    if (formData.socialLinks?.tiktok) {
+      payload.append("tiktok", formData.socialLinks.tiktok);
+    }
+    if (formData.socialLinks?.instagram) {
+      payload.append("instagram", formData.socialLinks.instagram);
     }
 
-    onSubmitFinal(payload);
+    try {
+      const res = await fetch("https://api.pozse.com/api/v1/business/submit", {
+        method: "POST",
+        body: payload,
+      });
+
+      const data = await res.json();
+      console.log("Submission result:", data);
+
+      if (res.ok) {
+        setOpenDialog(false);
+        setSuccessOpen(true);
+        localStorage.removeItem("onboardingData");
+        setTimeout(() => navigate("/dashboard"), 1500);
+      } else {
+        setSnackbar({
+          open: true,
+          message: data.message || "Submission failed",
+          severity: "error",
+        });
+      }
+    } catch (err) {
+      console.error("Submission error:", err);
+      alert("An error occurred while submitting");
+    }
   };
 
   const renderFile = (fileData) => {
@@ -132,11 +258,175 @@ const Step6FinalReview = ({ formData, setStep, onSubmitFinal }) => {
   return (
     <Box>
       <Typography
-        variant="h6"
+        variant="h4"
         fontWeight="bold"
-        mb={3}>
-        Final Review & Submit
+        mb={4}
+        sx={{ textAlign: "center" }}>
+        Terms Agreement
       </Typography>
+
+      <Box>
+        <Typography
+          varient="h6"
+          fontWeight="bold"
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          Introduction
+        </Typography>
+
+        <Typography
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          We respect your privacy and are committed to protecting your personal
+          information. This privacy policy explains how we collect, use and
+          disclose your information when you use our application and services.
+        </Typography>
+
+        <Typography
+          varient="h6"
+          fontWeight="bold"
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          Information We Collect
+        </Typography>
+
+        <Typography
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          <List>
+            {infoWeCollect.map((infos) => (
+              <ListItem key={infos.id}>
+                <ListItemText
+                  sx={{ fontFamily: "Poppins" }}
+                  primary={infos.text}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Typography>
+
+        <Typography
+          varient="h6"
+          fontWeight="bold"
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          How We Use Your Information
+        </Typography>
+
+        <Typography
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          <List>
+            {infoUsage.map((infos) => (
+              <ListItem key={infos.id}>
+                <ListItemText primary={infos.text} />
+              </ListItem>
+            ))}
+          </List>
+        </Typography>
+
+        <Typography
+          varient="h6"
+          fontWeight="bold"
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          How we share your information
+        </Typography>
+
+        <Typography
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          <List>
+            {infoShare.map((infos) => (
+              <ListItem key={infos.id}>
+                <ListItemText primary={infos.text} />
+              </ListItem>
+            ))}
+          </List>
+        </Typography>
+
+        <Typography
+          varient="h6"
+          fontWeight="bold"
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          Data Security
+        </Typography>
+
+        <Typography
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          We take reasonable measures to protects your information from
+          unauthorized access, use and disclosure including encryption and
+          secure socket layer (SSL) technology.
+        </Typography>
+
+        <Typography
+          varient="h6"
+          fontWeight="bold"
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          Data Retention
+        </Typography>
+
+        <Typography
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          We retain your information for as long as necessary to provide our
+          services and comply with legal requirements.
+        </Typography>
+
+        <Typography
+          varient="h6"
+          fontWeight="bold"
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          Your Rights
+        </Typography>
+
+        <Typography
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          <List>
+            {yourRight.map((rights) => (
+              <ListItem key={rights.id}>
+                <ListItemText primary={rights.text} />
+              </ListItem>
+            ))}
+          </List>
+        </Typography>
+
+        <Typography
+          varient="h6"
+          fontWeight="bold"
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          Changes To This Privacy Policy
+        </Typography>
+
+        <Typography
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          We may update this privacy policy from time to time. We will notify
+          you of any significant changes by posting a notice on our application
+          or website.
+        </Typography>
+
+        <Typography
+          varient="h6"
+          fontWeight="bold"
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          Contact Us
+        </Typography>
+
+        <Typography
+          mb={3}
+          sx={{ fontFamily: "Poppins" }}>
+          If you have any questions or concerns about this privacy policy,
+          please contact us at Pozse@gmail.com
+        </Typography>
+      </Box>
 
       <FormControlLabel
         control={
@@ -225,6 +515,50 @@ const Step6FinalReview = ({ formData, setStep, onSubmitFinal }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog
+        open={successOpen}
+        onClose={() => setSuccessOpen(false)}
+        maxWidth="sm"
+        fullWidth>
+        <DialogContent sx={{ textAlign: "center", p: 4 }}>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            gutterBottom>
+            You have successfully submitted your form
+          </Typography>
+
+          <Typography
+            variant="body1"
+            sx={{ mb: 3 }}>
+            This is your official confirmation. Thanks for submitting your{" "}
+            <span style={{ color: "red", fontWeight: 600 }}>brand details</span>
+            ! Our team is reviewing your information. Expect an update within
+            24–48 hours.
+          </Typography>
+
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <img
+              src={successImg}
+              alt="Submission Success"
+              style={{ maxWidth: 260, height: "auto" }}
+            />
+          </Box>
+        </DialogContent>
+      </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+        <MuiAlert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}>
+          {snackbar.message}
+        </MuiAlert>
+      </Snackbar>
     </Box>
   );
 };

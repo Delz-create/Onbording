@@ -2,6 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton, TextField, Button } from "@mui/material";
 import { CloudUpload } from "@mui/icons-material";
 
+const socialPlatforms = [
+  "Instagram",
+  "Facebook",
+  "Twitter / X",
+  "TikTok",
+  "YouTube",
+  "Pinterest",
+  "LinkedIn",
+];
+
 const Step3BusinessVerification = ({
   formData,
   handleChange,
@@ -14,20 +24,20 @@ const Step3BusinessVerification = ({
   );
 
   useEffect(() => {
-    if (formData.businessDoc?.preview) {
-      setDocPreview(formData.businessDoc.preview);
+    if (formData.businessRegDoc?.preview) {
+      setDocPreview(formData.businessRegDoc.preview);
     }
-    if (formData.storeImage?.preview) {
-      setStorePreview(formData.storeImage.preview);
+    if (formData.businessPhysicalPic?.preview) {
+      setStorePreview(formData.businessPhysicalPic.preview);
     }
-  }, [formData.businessDoc, formData.storeImage]);
+  }, [formData.businessRegDoc, formData.businessPhysicalPic]);
 
   const handleDocUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        handleChange("businessDoc", { file, preview: reader.result });
+        handleChange("businessRegDoc", { file, preview: reader.result });
         setDocPreview(reader.result);
       };
       reader.readAsDataURL(file);
@@ -39,7 +49,7 @@ const Step3BusinessVerification = ({
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        handleChange("storeImage", { file, preview: reader.result });
+        handleChange("businessPhysicalPic", { file, preview: reader.result });
         setStorePreview(reader.result);
       };
       reader.readAsDataURL(file);
@@ -70,9 +80,9 @@ const Step3BusinessVerification = ({
   };
 
   useEffect(() => {
-    const valid = !!formData.businessDoc;
+    const valid = !!formData.businessRegDoc;
     setStepValid(valid);
-  }, [formData.businessDoc, setStepValid]);
+  }, [formData.businessRegDoc, setStepValid]);
 
   return (
     <Box>
@@ -141,7 +151,7 @@ const Step3BusinessVerification = ({
               "&:hover": { backgroundColor: "#f5f5f5" },
             }}
             onClick={() => {
-              handleChange("businessDoc", null);
+              handleChange("businessRegDoc", null);
               setDocPreview(null);
             }}>
             ✕
@@ -207,7 +217,7 @@ const Step3BusinessVerification = ({
               "&:hover": { backgroundColor: "#f5f5f5" },
             }}
             onClick={() => {
-              handleChange("storeImage", null);
+              handleChange("businessPhysicalPic", null);
               setStorePreview(null);
             }}>
             ✕
@@ -232,7 +242,7 @@ const Step3BusinessVerification = ({
               fullWidth
               value={handle}
               onChange={(e) => handleSocialChange(index, e.target.value)}
-              placeholder="@yourhandle"
+              placeholder={`${socialPlatforms[index] || "Other"} Handle`}
             />
             <IconButton
               onClick={() => removeSocialField(index)}

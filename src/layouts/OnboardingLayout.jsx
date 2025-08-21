@@ -47,7 +47,6 @@ const OnboardingLayout = ({
         backgroundImage: `url(${OnboardingBG})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        // backdropFilter: "blur(8px)",
       }}>
       <Box
         sx={{
@@ -83,7 +82,7 @@ const OnboardingLayout = ({
             py: 8,
             px: 4,
             borderRadius: 3,
-            maxHeight: "50vh",
+            maxHeight: "65vh",
             backgroundColor: "rgba(255,255,255,0.85)",
           }}>
           {stepsList.map((step, index) => (

@@ -31,7 +31,7 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
   const handleBrandTypeChange = (event) => {
     const value = event.target.value;
     handleChange(
-      "brandTypes",
+      "brandType",
       typeof value === "string" ? value.split(",") : value
     );
   };
@@ -59,20 +59,20 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
       formData.brandDescription?.trim().split(/\s+/).filter(Boolean).length ||
       0;
     const taglineWordCount =
-      formData.tagline?.trim().split(/\s+/).filter(Boolean).length || 0;
+      formData.brandTagline?.trim().split(/\s+/).filter(Boolean).length || 0;
 
     const valid =
-      formData.brandTypes?.length > 0 &&
+      formData.brandType?.length > 0 &&
       formData.brandDescription &&
       descWordCount <= 100 &&
-      formData.tagline &&
+      formData.brandTagline &&
       taglineWordCount <= 10;
 
     setStepValid(valid);
   }, [
-    formData.brandTypes,
+    formData.brandType,
     formData.brandDescription,
-    formData.tagline,
+    formData.brandTagline,
     setStepValid,
   ]);
 
@@ -95,7 +95,7 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
       <Select
         multiple
         displayEmpty
-        value={formData.brandTypes || []}
+        value={formData.brandType || []}
         onChange={handleBrandTypeChange}
         input={<OutlinedInput />}
         fullWidth
@@ -117,17 +117,16 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
       </Select>
       <FormHelperText>Select one or more brand types</FormHelperText>
 
-      {/* Selected brand types below */}
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
-        {(formData.brandTypes || []).map((value) => (
+        {(formData.brandType || []).map((value) => (
           <Chip
             key={value}
             label={value}
             size="small"
             onDelete={() =>
               handleChange(
-                "brandTypes",
-                formData.brandTypes.filter((item) => item !== value)
+                "brandType",
+                formData.brandType.filter((item) => item !== value)
               )
             }
           />
@@ -159,14 +158,15 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
           label="Tagline"
           fullWidth
           margin="normal"
-          value={formData.tagline || ""}
-          onChange={(e) => handleChange("tagline", e.target.value)}
+          value={formData.brandTagline || ""}
+          onChange={(e) => handleChange("brandTagline", e.target.value)}
           helperText="Max 10 words"
         />
         <Typography
           variant="caption"
           sx={{ position: "absolute", bottom: 8, right: 12, color: "#888" }}>
-          {formData.tagline?.trim().split(/\s+/).filter(Boolean).length || 0}
+          {formData.brandTagline?.trim().split(/\s+/).filter(Boolean).length ||
+            0}
           /10
         </Typography>
       </Box>

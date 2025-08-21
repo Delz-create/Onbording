@@ -11,13 +11,13 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [usernameStatus, setUsernameStatus] = useState(null);
 
-  const checkUsername = async (username) => {
-    if (!username) return;
+  const checkUsername = async (buinessUsername) => {
+    if (!buinessUsername) return;
     setCheckingUsername(true);
     try {
       const res = await fetch(
         `https://api.pozse.com/api/v1/business/check-username/${encodeURIComponent(
-          username
+          buinessUsername
         )}`
       );
       const data = await res.json();
@@ -37,17 +37,6 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
   };
 
   useEffect(() => {
-    if (formData.username) {
-      let baseId = formData.username;
-      if (formData.officialBrandName) {
-        baseId += `-${formData.officialBrandName}`;
-      }
-      const brandId = baseId.replace(/\s+/g, "-").toLowerCase();
-      handleChange("businessID", brandId);
-    }
-  }, [formData.username, formData.officialBrandName]);
-
-  useEffect(() => {
     const storedEmail = localStorage.getItem("email");
     if (storedEmail && !formData.businessEmail) {
       handleChange("businessEmail", storedEmail);
@@ -58,21 +47,19 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
     const valid =
       formData.officialBrandName &&
       formData.businessEmail &&
-      formData.username &&
+      formData.businessUsername &&
       usernameStatus === "available" &&
-      formData.businessID &&
-      formData.address &&
-      formData.country;
+      formData.businessAddress &&
+      formData.countryOfRegistration;
 
     setStepValid(valid);
   }, [
     formData.officialBrandName,
     formData.businessEmail,
-    formData.username,
+    formData.businessUsername,
     usernameStatus,
-    formData.businessID,
-    formData.address,
-    formData.country,
+    formData.businessAddress,
+    formData.countryOfRegistration,
   ]);
 
   return (
@@ -110,9 +97,9 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
           label="Username"
           fullWidth
           margin="normal"
-          value={formData.username || ""}
-          onChange={(e) => handleChange("username", e.target.value)}
-          onBlur={() => checkUsername(formData.username)}
+          value={formData.businessUsername || ""}
+          onChange={(e) => handleChange("businessUsername", e.target.value)}
+          onBlur={() => checkUsername(formData.businessUsername)}
           helperText={
             checkingUsername
               ? "Checking availability..."
@@ -137,32 +124,27 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
         label="Address"
         fullWidth
         margin="normal"
-        value={formData.address || ""}
-        onChange={(e) => handleChange("address", e.target.value)}
+        value={formData.businessAddress || ""}
+        onChange={(e) => handleChange("businessAddress", e.target.value)}
       />
 
-      <TextField
-        label="Country of Registration"
+      <Typography
+        variant="body2"
+        fontWeight="bold"
+        mt={2}>
+        Country of Registration
+      </Typography>
+      <Select
         fullWidth
-        margin="normal"
-        value={formData.country || ""}
-        onChange={(e) => handleChange("country", e.target.value)}
-      />
-
-      {!(
-        formData.officialBrandName &&
-        formData.businessEmail &&
-        formData.username &&
-        usernameStatus === "available" &&
-        formData.businessId &&
-        formData.address &&
-        formData.country
-      ) && (
-        <Alert sx={{ mt: 2, backgroundColor: "#f67676", color: "#B71C1C" }}>
-          Please complete all fields and choose an available username to
-          continue.
-        </Alert>
-      )}
+        value={formData.countryOfRegistration || ""}
+        onChange={(e) => handleChange("countryOfRegistration", e.target.value)}
+        displayEmpty>
+        <MenuItem value="">
+          <em>Select Country</em>
+        </MenuItem>
+        <MenuItem value="United States">United States</MenuItem>
+        <MenuItem value="Nigeria">Nigeria</MenuItem>
+      </Select>
     </Box>
   );
 };

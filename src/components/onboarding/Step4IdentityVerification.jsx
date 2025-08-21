@@ -15,13 +15,17 @@ const Step4IdentityVerification = ({
     if (formData.identityBusinessDoc?.file) {
       setBusinessDocName(formData.identityBusinessDoc.file.name);
     }
-    if (formData.govID?.file) {
-      setGovIDName(formData.govID.file.name);
+    if (formData.govermentId?.file) {
+      setGovIDName(formData.govermentId.file.name);
     }
-    if (formData.selfieOrPassport?.preview) {
-      setPhotoPreview(formData.selfieOrPassport.preview);
+    if (formData.passportPhoto?.preview) {
+      setPhotoPreview(formData.passportPhoto.preview);
     }
-  }, [formData.identityBusinessDoc, formData.govID, formData.selfieOrPassport]);
+  }, [
+    formData.identityBusinessDoc,
+    formData.govermentId,
+    formData.passportPhoto,
+  ]);
 
   const handleBusinessDocUpload = (e) => {
     const file = e.target.files[0];
@@ -40,7 +44,7 @@ const Step4IdentityVerification = ({
     if (file && file.type === "application/pdf") {
       const reader = new FileReader();
       reader.onloadend = () => {
-        handleChange("govID", { file, preview: reader.result });
+        handleChange("govermentId", { file, preview: reader.result });
         setGovIDName(file.name);
       };
       reader.readAsDataURL(file);
@@ -52,7 +56,7 @@ const Step4IdentityVerification = ({
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        handleChange("selfieOrPassport", { file, preview: reader.result });
+        handleChange("passportPhoto", { file, preview: reader.result });
         setPhotoPreview(reader.result);
       };
       reader.readAsDataURL(file);
@@ -60,9 +64,9 @@ const Step4IdentityVerification = ({
   };
 
   useEffect(() => {
-    const valid = !!formData.govID && !!formData.selfieOrPassport;
+    const valid = !!formData.govermentId && !!formData.passportPhoto;
     setStepValid(valid);
-  }, [formData.govID, formData.selfieOrPassport, setStepValid]);
+  }, [formData.govermentId, formData.passportPhoto, setStepValid]);
 
   return (
     <Box>
@@ -163,7 +167,7 @@ const Step4IdentityVerification = ({
           <IconButton
             size="small"
             onClick={() => {
-              handleChange("govID", null);
+              handleChange("govermentId", null);
               setGovIDName(null);
             }}>
             ✕
@@ -235,7 +239,7 @@ const Step4IdentityVerification = ({
               "&:hover": { backgroundColor: "#f5f5f5" },
             }}
             onClick={() => {
-              handleChange("selfieOrPassport", null);
+              handleChange("passportPhoto", null);
               setPhotoPreview(null);
             }}>
             ✕
