@@ -1,51 +1,83 @@
 import React from "react";
-import { Box, Typography, Paper } from "@mui/material";
+import { Box, Typography, AppBar, Toolbar, Avatar, Paper } from "@mui/material";
+import Logo from "../assets/images/Logo.png";
 
-const Dashboard = ({ user }) => {
+const Dashboard = () => {
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const email = localStorage.getItem("email");
+
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          p: 2,
-          borderBottom: "1px solid #eee",
-        }}>
-        <img
-          src="/logo192.png"
-          alt="Logo"
-          style={{ height: 40 }}
-        />
-        <Typography fontWeight="bold">@{user?.username}</Typography>
-      </Box>
+    <Box sx={{ height: "100vh", bgcolor: "#f9f9f9" }}>
+      <AppBar
+        position="static"
+        sx={{ bgcolor: "#b71c1c" }}>
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box
+            display="flex"
+            alignItems="center"
+            gap={2}>
+            <img
+              src={Logo}
+              alt="Pozse Logo"
+              style={{ height: 40 }}
+            />
+            <Typography
+              variant="h6"
+              sx={{ fontFamily: "Poppins" }}>
+              Dashboard
+            </Typography>
+          </Box>
+
+          <Box
+            display="flex"
+            alignItems="center"
+            gap={1}>
+            <Typography
+              variant="body1"
+              sx={{ fontFamily: "Poppins" }}>
+              {user?.name || email || "Guest"}
+            </Typography>
+            <Avatar sx={{ bgcolor: "#fff", color: "#b71c1c" }}>
+              {user?.name ? user.name[0].toUpperCase() : "U"}
+            </Avatar>
+          </Box>
+        </Toolbar>
+      </AppBar>
 
       <Box
         sx={{
-          flex: 1,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          height: "80vh",
+          flexDirection: "column",
+          gap: 2,
         }}>
         <Paper
+          elevation={3}
           sx={{
             p: 4,
             borderRadius: 3,
             textAlign: "center",
             maxWidth: 400,
-            boxShadow: 3,
           }}>
           <Typography
-            variant="h6"
+            variant="h5"
             fontWeight="bold"
-            gutterBottom>
-            Submission Status
+            gutterBottom
+            sx={{ fontFamily: "Poppins" }}>
+            Brand Status
           </Typography>
           <Typography
             variant="body1"
-            sx={{ color: "#666" }}>
-            Your brand information has been submitted. Our team is reviewing it.
-            Please check back later for updates.
+            sx={{ mb: 2, fontFamily: "Poppins" }}>
+            Your brand details have been submitted successfully.
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ color: "gray", fontFamily: "Poppins" }}>
+            Our team is reviewing your application. Expect an update within
+            24–48 hours.
           </Typography>
         </Paper>
       </Box>

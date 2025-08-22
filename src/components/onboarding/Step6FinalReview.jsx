@@ -136,9 +136,25 @@ const Step6FinalReview = ({ formData, setStep }) => {
       payload.append("instagram", formData.socialLinks.instagram);
     }
 
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setSnackbar({
+        open: true,
+        message: "Session expired. Please login again!",
+        severity: "error",
+      });
+      localStorage.removeItem("onboardingData");
+      setTimeout(() => navigate("/signin"), 1500);
+      return;
+    }
+
     try {
       const res = await fetch("https://api.pozse.com/api/v1/business/submit", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: payload,
       });
 
@@ -159,7 +175,11 @@ const Step6FinalReview = ({ formData, setStep }) => {
       }
     } catch (err) {
       console.error("Submission error:", err);
-      alert("An error occurred while submitting");
+      setSnackbar({
+        open: true,
+        message: "An error occured while submitting!",
+        severity: "error",
+      });
     }
   };
 
