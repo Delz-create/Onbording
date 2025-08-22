@@ -3,7 +3,7 @@ export const getReviewSections = (formData) => [
     title: "Account Setup",
     step: 0,
     fields: [
-      { label: "Official Brand Name", value: formData.officialBrandName },
+      { label: "Official Brand Name", value: formData.businessName },
       { label: "Business Email", value: formData.businessEmail },
       { label: "Username", value: formData.businessUsername },
       { label: "Business Address", value: formData.businessAddress },

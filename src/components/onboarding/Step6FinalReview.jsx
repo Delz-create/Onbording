@@ -97,21 +97,24 @@ const Step6FinalReview = ({ formData, setStep }) => {
     if (formData.brandLogo?.file)
       payload.append("brandLogo", formData.brandLogo.file);
     if (formData.businessDoc?.file)
-      payload.append("businessRegDoc", formData.businessDoc.file);
+      payload.append("businessRegDoc", formData.businessRegDoc.file);
     if (formData.storeImage?.file)
-      payload.append("businessPhysicalPic", formData.storeImage.file);
+      payload.append("businessPhysicalPic", formData.businessPhysicalPic.file);
     if (formData.govID?.file)
-      payload.append("govermentId", formData.govID.file);
+      payload.append("govermentId", formData.govermentId.file);
     if (formData.selfieOrPassport?.file)
-      payload.append("passportPhoto", formData.selfieOrPassport.file);
+      payload.append("passportPhoto", formData.passportPhoto.file);
     if (formData.lookbook?.file)
       payload.append("lookbook", formData.lookbook.file);
 
-    payload.append("businessName", formData.officialBrandName || "");
+    payload.append("businessName", formData.businessName || "");
     payload.append("businessEmail", formData.businessEmail || "");
-    payload.append("businessUsername", formData.username || "");
-    payload.append("businessAddress", formData.address || "");
-    payload.append("countryOfRegistration", formData.country || "");
+    payload.append("businessUsername", formData.businessUsername || "");
+    payload.append("businessAddress", formData.businessAddress || "");
+    payload.append(
+      "countryOfRegistration",
+      formData.countryOfRegistration || ""
+    );
 
     if (formData.brandTypes?.length) {
       payload.append("brandType", formData.brandTypes.join(", "));
@@ -120,7 +123,7 @@ const Step6FinalReview = ({ formData, setStep }) => {
       payload.append("brandDescription", formData.brandDescription);
     }
     if (formData.tagline) {
-      payload.append("brandTagline", formData.tagline);
+      payload.append("brandTagline", formData.brandTagline);
     }
     if (formData.brandWebsite) {
       payload.append("brandWebsite", formData.brandWebsite);

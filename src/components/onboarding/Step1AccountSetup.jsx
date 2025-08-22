@@ -39,7 +39,7 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
 
   useEffect(() => {
     const valid =
-      formData.officialBrandName &&
+      formData.businessName &&
       formData.businessEmail &&
       formData.businessUsername &&
       usernameStatus === "available" &&
@@ -48,7 +48,7 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
 
     setStepValid(valid);
   }, [
-    formData.officialBrandName,
+    formData.businessName,
     formData.businessEmail,
     formData.businessUsername,
     usernameStatus,
@@ -72,8 +72,8 @@ const Step1AccountSetup = ({ formData, handleChange, setStepValid }) => {
         label="Official Brand Name"
         fullWidth
         margin="normal"
-        value={formData.officialBrandName || ""}
-        onChange={(e) => handleChange("officialBrandName", e.target.value)}
+        value={formData.businessName || ""}
+        onChange={(e) => handleChange("businessName", e.target.value)}
       />
 
       <TextField
