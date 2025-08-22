@@ -167,6 +167,9 @@ const Step6FinalReview = ({ formData, setStep }) => {
       if (res.ok) {
         setOpenDialog(false);
         setSuccessOpen(true);
+
+        localStorage.setItem("onboardingCompleted", "true");
+
         localStorage.removeItem("onboardingData");
         setTimeout(() => navigate("/dashboard"), 1500);
       } else {

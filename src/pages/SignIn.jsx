@@ -61,6 +61,17 @@ const SignIn = () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("email", data.user.email);
 
+        const alreadyCompleted =
+          localStorage.getItem("onboardingCompleted") === "true";
+
+        setTimeout(() => {
+          if (alreadyCompleted) {
+            window.location.href = "/dashboard";
+          } else {
+            window.location.href = "/signup";
+          }
+        }, 1500);
+
         setTimeout(() => {
           window.location.href = "/signup";
         }, 1500);
