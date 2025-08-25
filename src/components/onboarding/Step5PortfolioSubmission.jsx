@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton, TextField } from "@mui/material";
-import { CloudUpload } from "@mui/icons-material";
+import { FiUpload } from "react-icons/fi";
 
 const Step5PortfolioSubmission = ({ formData, handleChange, setStepValid }) => {
   const [lookbookName, setLookbookName] = useState(null);
@@ -76,7 +76,7 @@ const Step5PortfolioSubmission = ({ formData, handleChange, setStepValid }) => {
               height: 50,
               "&:hover": { backgroundColor: "#b71c1c" },
             }}>
-            <CloudUpload />
+            <FiUpload />
           </IconButton>
         </label>
         <Typography
@@ -117,10 +117,8 @@ const Step5PortfolioSubmission = ({ formData, handleChange, setStepValid }) => {
             size="small"
             sx={{
               position: "absolute",
-              top: -8,
-              right: -8,
-              backgroundColor: "#fff",
-              "&:hover": { backgroundColor: "#f5f5f5" },
+              top: -15,
+              right: 10,
             }}
             onClick={() => {
               handleChange("lookbook", null);

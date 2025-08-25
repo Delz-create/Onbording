@@ -226,16 +226,14 @@ const Step2BrandInfo = ({ formData, handleChange, setStepValid }) => {
           <img
             src={logoPreview}
             alt="Brand Logo Preview"
-            style={{ maxWidth: "200px", borderRadius: "8px" }}
+            style={{ maxWidth: "30px", borderRadius: "8px" }}
           />
           <IconButton
             size="small"
             sx={{
               position: "absolute",
-              top: -8,
-              right: -8,
-              backgroundColor: "#fff",
-              "&:hover": { backgroundColor: "#f5f5f5" },
+              top: -15,
+              right: -10,
             }}
             onClick={() => {
               handleChange("brandLogo", null);

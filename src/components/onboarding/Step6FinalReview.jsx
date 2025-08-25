@@ -490,8 +490,16 @@ const Step6FinalReview = ({ formData, setStep }) => {
         onClose={() => setOpenDialog(false)}
         maxWidth="md"
         fullWidth>
-        <DialogTitle>Review Your Information</DialogTitle>
+        <DialogTitle>Preview</DialogTitle>
         <DialogContent dividers>
+          <Typography
+            mb={3}
+            sx={{
+              fontFamily: "Poppins",
+            }}>
+            You will not be able to change after you submit your application
+          </Typography>
+
           {sections.map((section, idx) => (
             <Box
               key={idx}
@@ -512,29 +520,42 @@ const Step6FinalReview = ({ formData, setStep }) => {
                     setTimeout(() => {
                       setStep(section.step);
                     }, 0);
+                  }}
+                  sx={{
+                    color: "blue",
+                    fontFamily: "Poppins",
                   }}>
                   Edit
                 </Button>
               </Box>
-              <Divider sx={{ my: 1 }} />
-              {section.fields.map((field, fIdx) => (
-                <Box
-                  key={fIdx}
-                  mb={1}>
-                  <Typography
-                    variant="body2"
-                    fontWeight="bold">
-                    {field.label}:
-                  </Typography>
-                  {field.file ? (
-                    renderFile(field.file)
-                  ) : (
-                    <Typography variant="body2">
-                      {field.value || "—"}
+              <Box
+                sx={{
+                  bgcolor: "#f9fbfd",
+                  p: 3,
+                  borderRadius: 3,
+                }}>
+                {section.fields.map((field, fIdx) => (
+                  <Box
+                    key={fIdx}
+                    mb={1}
+                    sx={{
+                      my: 1,
+                    }}>
+                    <Typography
+                      variant="body2"
+                      fontWeight="bold">
+                      {field.label}:
                     </Typography>
-                  )}
-                </Box>
-              ))}
+                    {field.file ? (
+                      renderFile(field.file)
+                    ) : (
+                      <Typography variant="body2">
+                        {field.value || "—"}
+                      </Typography>
+                    )}
+                  </Box>
+                ))}
+              </Box>
             </Box>
           ))}
         </DialogContent>

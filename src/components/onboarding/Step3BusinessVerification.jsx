@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton, TextField, Button } from "@mui/material";
-import { CloudUpload } from "@mui/icons-material";
+import { FiUpload } from "react-icons/fi";
 
 const socialPlatforms = [
   "Instagram",
@@ -119,7 +119,7 @@ const Step3BusinessVerification = ({
               height: 50,
               "&:hover": { backgroundColor: "#b71c1c" },
             }}>
-            <CloudUpload />
+            <FiUpload />
           </IconButton>
         </label>
         <Typography
@@ -139,16 +139,14 @@ const Step3BusinessVerification = ({
           <img
             src={docPreview}
             alt="Business Document Preview"
-            style={{ maxWidth: "200px", borderRadius: "8px" }}
+            style={{ maxWidth: "30px", borderRadius: "8px" }}
           />
           <IconButton
             size="small"
             sx={{
               position: "absolute",
-              top: -8,
-              right: -8,
-              backgroundColor: "#fff",
-              "&:hover": { backgroundColor: "#f5f5f5" },
+              top: -15,
+              right: -10,
             }}
             onClick={() => {
               handleChange("businessRegDoc", null);
@@ -185,7 +183,7 @@ const Step3BusinessVerification = ({
               height: 50,
               "&:hover": { backgroundColor: "#b71c1c" },
             }}>
-            <CloudUpload />
+            <FiUpload />
           </IconButton>
         </label>
         <Typography
@@ -205,16 +203,14 @@ const Step3BusinessVerification = ({
           <img
             src={storePreview}
             alt="Store Preview"
-            style={{ maxWidth: "200px", borderRadius: "8px" }}
+            style={{ maxWidth: "30px", borderRadius: "8px" }}
           />
           <IconButton
             size="small"
             sx={{
               position: "absolute",
-              top: -8,
-              right: -8,
-              backgroundColor: "#fff",
-              "&:hover": { backgroundColor: "#f5f5f5" },
+              top: -15,
+              right: -10,
             }}
             onClick={() => {
               handleChange("businessPhysicalPic", null);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton, Button } from "@mui/material";
-import { CloudUpload } from "@mui/icons-material";
+import { FiUpload } from "react-icons/fi";
 
 const Step4IdentityVerification = ({
   formData,
@@ -103,7 +103,7 @@ const Step4IdentityVerification = ({
               height: 50,
               "&:hover": { backgroundColor: "#b71c1c" },
             }}>
-            <CloudUpload />
+            <FiUpload />
           </IconButton>
         </label>
         <Typography
@@ -152,7 +152,7 @@ const Step4IdentityVerification = ({
               height: 50,
               "&:hover": { backgroundColor: "#b71c1c" },
             }}>
-            <CloudUpload />
+            <FiUpload />
           </IconButton>
         </label>
         <Typography
@@ -201,7 +201,7 @@ const Step4IdentityVerification = ({
               height: 50,
               "&:hover": { backgroundColor: "#b71c1c" },
             }}>
-            <CloudUpload />
+            <FiUpload />
           </IconButton>
         </label>
         <Typography
@@ -222,8 +222,8 @@ const Step4IdentityVerification = ({
             src={photoPreview}
             alt="Selfie Preview"
             style={{
-              width: "120px",
-              height: "120px",
+              width: "35px",
+              height: "35px",
               borderRadius: "50%",
               objectFit: "cover",
               border: "2px solid #ccc",
@@ -233,10 +233,8 @@ const Step4IdentityVerification = ({
             size="small"
             sx={{
               position: "absolute",
-              top: -8,
-              right: -8,
-              backgroundColor: "#fff",
-              "&:hover": { backgroundColor: "#f5f5f5" },
+              top: -15,
+              right: -10,
             }}
             onClick={() => {
               handleChange("passportPhoto", null);

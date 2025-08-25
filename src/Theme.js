@@ -24,7 +24,7 @@ const theme = createTheme({
           },
         },
         outlinedPrimary: {
-          borderColor: "#d32f2f",
+          borderColor: "#111",
           color: "#d32f2f",
           "&:hover": {
             borderColor: "#b71c1c",
@@ -44,7 +44,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#d32f2f",
+            borderColor: "#111",
           },
           "&:hover .MuiOutlinedInput-notchedOutline": {
             borderColor: "#b71c1c",

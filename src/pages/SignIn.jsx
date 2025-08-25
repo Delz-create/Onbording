@@ -14,6 +14,8 @@ import {
   Dialog,
   DialogContent,
 } from "@mui/material";
+import { Snackbar, Alert as MuiAlert } from "@mui/material";
+
 import { MdOutlineEmail } from "react-icons/md";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
@@ -30,6 +32,11 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ type: "", message: "" });
   const [openPopup, setOpenPopup] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+  });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,7 +45,6 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setAlert({ type: "", message: "" });
 
     try {
       const body = new URLSearchParams();
@@ -54,7 +60,11 @@ const SignIn = () => {
       const data = await res.json();
 
       if (data.success) {
-        setAlert({ type: "success", message: data.message });
+        setSnackbar({
+          open: true,
+          message: data.message,
+          severity: "success",
+        });
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("email", data.user.email);
@@ -100,14 +110,22 @@ const SignIn = () => {
         if (isNotRegistered) {
           setOpenPopup(true);
         } else {
-          setAlert({ type: "error", message: data.message });
+          setSnackbar({
+            open: true,
+            message: data.message,
+            severity: "error",
+          });
         }
       }
     } catch {
+      setSnackbar({
+        open: true,
+        message: "Something went wrong. Try again.",
+        severity: "error",
+      });
       setAlert({ type: "error", message: "Something went wrong. Try again." });
     } finally {
       setLoading(false);
-      setTimeout(() => setAlert({ type: "", message: "" }), 30000);
     }
   };
 
@@ -415,6 +433,18 @@ const SignIn = () => {
             </Box>
           </DialogContent>
         </Dialog>
+
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={4000}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+          <MuiAlert
+            onClose={() => setSnackbar({ ...snackbar, open: false })}
+            severity={snackbar.severity}>
+            {snackbar.message}
+          </MuiAlert>
+        </Snackbar>
       </Box>
     </>
   );
