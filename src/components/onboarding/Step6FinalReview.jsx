@@ -168,9 +168,20 @@ const Step6FinalReview = ({ formData, setStep }) => {
         setOpenDialog(false);
         setSuccessOpen(true);
 
-        localStorage.setItem("onboardingCompleted", "true");
+        localStorage.setItem("isOnboarded", "true");
+
+        const updatedUser = {
+          ...JSON.parse(localStorage.getItem("user") || "{}"),
+          businessName: formData.businessName || "",
+          businessEmail: formData.businessEmail || "",
+          businessUsername: formData.businessUsername || "",
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+
+        localStorage.setItem("businessName", formData.businessName || "");
 
         localStorage.removeItem("onboardingData");
+
         setTimeout(() => navigate("/dashboard"), 1500);
       } else {
         setSnackbar({

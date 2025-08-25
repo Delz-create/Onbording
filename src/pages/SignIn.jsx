@@ -47,9 +47,7 @@ const SignIn = () => {
 
       const res = await fetch("https://api.pozse.com/api/v1/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body,
       });
 
@@ -61,20 +59,33 @@ const SignIn = () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("email", data.user.email);
 
-        const alreadyCompleted =
-          localStorage.getItem("onboardingCompleted") === "true";
-
-        setTimeout(() => {
-          if (alreadyCompleted) {
+        const isOnboardedFlag = localStorage.getItem("isOnboarded");
+        if (isOnboardedFlag === "true") {
+          setTimeout(() => {
             window.location.href = "/dashboard";
-          } else {
-            window.location.href = "/signup";
-          }
-        }, 1500);
+          }, 1500);
+          return;
+        }
 
-        setTimeout(() => {
-          window.location.href = "/signup";
-        }, 1500);
+        const onboardRes = await fetch(
+          "https://api.pozse.com/api/v1/business/is-onboarded",
+          {
+            headers: { Authorization: `Bearer ${data.token}` },
+          }
+        );
+
+        const onboardData = await onboardRes.json();
+
+        if (onboardData.success && onboardData.data?.isOnboarded) {
+          localStorage.setItem("isOnboarded", "true");
+          setTimeout(() => {
+            window.location.href = "/dashboard";
+          }, 1500);
+        } else {
+          setTimeout(() => {
+            window.location.href = "/signup";
+          }, 1500);
+        }
       } else {
         const msg = data.message.toLowerCase();
         const notRegisteredKeywords = [
@@ -82,7 +93,6 @@ const SignIn = () => {
           "no account",
           "does not exist",
         ];
-
         const isNotRegistered = notRegisteredKeywords.some((keyword) =>
           msg.includes(keyword)
         );
